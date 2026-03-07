@@ -16,15 +16,16 @@
 
 
 // Direct3D와 관련 있는 헤더 파일들 추가
-#include <string>
-#include <wrl.h>
-#include <shellapi.h>
+#include <string>      // 문자열 처리
+#include <wrl.h>       // Microsoft의 Windows Runtime Library (WRL) 헤더 파일
+#include <shellapi.h>  // Shell API 헤더 파일 (파일 열기 대화상자 등)
 
+// Direct3D 11 필수 헤더 파일들
 #include <d3d11.h>
 #include <dxgi1_4.h>
-
 #include <d3dcompiler.h>
 
+// DirectXMath 라이브러리 헤더 파일 (3D 좌표 계산 이용)
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
