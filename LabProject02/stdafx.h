@@ -13,3 +13,18 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+
+
+// Direct3D와 관련 있는 헤더 파일들 추가
+#include <string>
+#include <wrl.h>
+#include <shellapi.h>
+
+#include <d3d11.h>
+#include <dxgi1_4.h>
+
+#include <d3dcompiler.h>
+
+#include <DirectXMath.h>
+#include <DirectXPackedVector.h>
+#include <DirectXColors.h>
