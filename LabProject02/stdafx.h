@@ -37,3 +37,9 @@ using namespace DirectX;
 using namespace DirectX::PackedVector;
 
 using Microsoft::WRL::ComPtr; // ComPtr을 사용하기 위한 네임스페이스 선언
+
+#pragma comment(lib, "d3dcompiler.lib") // D3D 컴파일러 라이브러리 링크
+#pragma comment(lib, "d3d12.lib")        // Direct3D 12 라이브러리 링크
+#pragma comment(lib, "dxgi.lib")         // DXGI 라이브러리 링크
+
+#pragma comment(lib, "dxguid.lib")       // DirectX GUID 라이브러리 링크
