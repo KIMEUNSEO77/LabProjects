@@ -1,6 +1,6 @@
 ﻿// LabProject01.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 // 20260307
-// 주 윈도우 클라이언트 영역 크기 변경
+// 주 윈도우 클라이언트 영역 크기 변경 (640 x 480)
 // 윈도우 스타일 변경 (최대화 버튼 제거, 크기 조절 불가)
 
 #include "framework.h"
@@ -99,8 +99,22 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+
+
+   // 여기에 작성
+   DWORD dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU | WS_BORDER;
+   RECT rc = { 0, 0, 640, 480 }; // 원하는 클라이언트 영역 크기
+   // AdjustWindowRect 함수를 사용하여 전체 창 크기를 계산
+   // BOOL WINAPI AdjustWindowRect(LPRECT lpRect, DWWORD dwStyle, BOOL bMenu);
+   // lpRect: 창의 클라이언트 영역 크기를 나타내는 사각형 지정, 윈도우 새로운 크기를 lpRect을 통해 반환
+   // dwStyle: 윈도우 창의 스타일 지정
+   // bMenu: 윈도우가 메뉴를 가지는 가의 여부 지정. TRUE이면 메뉴가 있는 창으로 간주, FALSE이면 메뉴가 없는 창으로 간주
+   AdjustWindowRect(&rc, dwStyle, FALSE);
+
+
+   HWND hWnd = CreateWindowW(szWindowClass, szTitle, dwStyle,
+      CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top,
+       nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
