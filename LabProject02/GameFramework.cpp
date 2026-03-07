@@ -37,3 +37,22 @@ CGameFramework::~CGameFramework()
 {
 
 }
+
+// 응용 프로그램이 실행되어 주 윈도우가 생성되면 호출됨
+bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
+{
+	m_hInstance = hInstance;
+	m_hWnd = hMainWnd;
+
+	// Direct3D 디바이스, 명령 큐와 명령 리스트, 스왑 체인 등을 생성하는 함수 호출
+	CreateDirect3DDevice();
+	CreateCommandQueueAndList();
+	CreateSwapChain();
+	CreateRtvAndDsvDescriptorHeaps();
+	CreateRenderTargetView();
+	CreateDepthStencilView();
+
+	BuildObjects(); // 렌더링할 게임 오브젝트 생성
+
+	return(true);
+}
