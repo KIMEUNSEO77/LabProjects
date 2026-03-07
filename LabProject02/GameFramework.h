@@ -17,8 +17,8 @@ private:
 	ID3D12Device* m_pd3dDevice;         // Direct3D 12 디바이스 인터페이스 포인터
 
 	bool m_bMsaa4xEnable = false; // 4x MSAA 사용 여부
-
 	UINT m_nMsaa4xQualityLevels = 0; // 4x MSAA 품질 수준 수
+
 	static const UINT m_nSwapChainBuffers = 2; // 스왑 체인 후면 버퍼 수
 	UINT m_nSwapChainBufferIndex; // 현재 스왑 체인 버퍼 인덱스
 
@@ -26,9 +26,15 @@ private:
 	ID3D12DescriptorHeap* m_pd3dRtvDescriptorHeap; // 렌더 타겟 뷰 디스크립터 힙 인터페이스 포인터
 	UINT m_nDsvDescriptorIncrementSize; // 깊이-스텐실 뷰 디스크립터 크기 증가량
 
+	ID3D12Resource* m_pd3dDepthStencilBuffer; // 깊이-스텐실 버퍼 리소스 포인터
+	ID3D12DescriptorHeap* m_pd3dDsvDescriptorHeap; // 깊이-스텐실 뷰 디스크립터 힙 인터페이스 포인터
+	UINT m_nRtvDescriptorIncrementSize; // 렌더 타겟 뷰 디스크립터 크기 증가량
+
 	ID3D12CommandQueue* m_pd3dCommandQueue; // 명령 큐 인터페이스 포인터
 	ID3D12CommandAllocator* m_pd3dCommandAllocator; // 명령 할당자 인터페이스 포인터
 	ID3D12GraphicsCommandList* m_pd3dCommandList; // 그래픽 명령 리스트 인터페이스 포인터
+
+	ID3D12PipelineState* m_pd3dPipeLineState; // 파이프라인 상태 인터페이스 포인터
 
 	ID3D12Fence* m_pd3dFence; // 펜스 인터페이스 포인터
 	UINT64 m_nFenceValue; // 펜스 값
@@ -51,6 +57,8 @@ public:
 
 	void CreateRenderTargetView(); // 렌더 타겟 뷰 생성
 	void CreateDepthStencilView(); // 깊이-스텐실 뷰 생성
+	void BuildObjects(); // 게임 오브젝트 생성
+	void ReleaseObjects(); // 게임 오브젝트 해제
 
 	void ProcessInput(); // 사용자 입력 처리
 	void AnimateObjects(); // 애니메이션 처리
