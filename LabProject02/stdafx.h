@@ -20,8 +20,8 @@
 #include <wrl.h>       // Microsoft의 Windows Runtime Library (WRL) 헤더 파일
 #include <shellapi.h>  // Shell API 헤더 파일 (파일 열기 대화상자 등)
 
-// Direct3D 11 필수 헤더 파일들
-#include <d3d11.h>
+// Direct3D 12 필수 헤더 파일들
+#include <d3d12.h>
 #include <dxgi1_4.h>
 #include <d3dcompiler.h>
 
@@ -29,3 +29,11 @@
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
+#include <DirectXCollision.h>
+
+#include <dxgidebug.h>   // DirectX 디버깅 헤더 파일
+
+using namespace DirectX;
+using namespace DirectX::PackedVector;
+
+using Microsoft::WRL::ComPtr; // ComPtr을 사용하기 위한 네임스페이스 선언
