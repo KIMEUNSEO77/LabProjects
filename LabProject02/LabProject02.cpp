@@ -46,6 +46,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
 
+    // GetMessage: 처리해야 할 윈도우 메시지가 메시지 큐에 있으면 꺼내와 처리
+    // 메시지가 없으면 CPU를 운영체제에 반납
+    // 그러나 게임 프로그램은 프로그램이 처리할 메시지가 없더라도 화면 렌더링, 사용자 입력처리, 길찾기 등의 작업이 계속되어야 함.
     /*
     // 기본 메시지 루프입니다:
     while (GetMessage(&msg, nullptr, 0, 0))
@@ -58,6 +61,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
     */
 
+    // PeekMessage: 메시지 큐에 처리해야 할 메시지가 있으면 꺼내와 TRUE반환(정상적인 윈도우 메시지 처리 과정 수행)
+	// 없으면 FALSE반환 -> gGameFramework.FrameAdvance() 호출하여 게임 프로그램이 CPU를 계속 사용할 수 있도록 함
+    // 사용자가 프로그램을 종료할 때까지 반복
+	// 메시지 루프 종료 시 gGameFramework.OnDestroy() 호출하여 게임 프로그램 종료(프레임워크 객체 소멸)
     while (1)
     {
         if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
