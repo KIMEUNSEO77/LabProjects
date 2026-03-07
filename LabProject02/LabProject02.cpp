@@ -4,6 +4,9 @@
 
 #include "stdafx.h"
 #include "LabProject02.h"
+#include "GameFramework.h"
+
+CGameFramework gGameFramework;  // 게임 프로그램 골격을 나타내는 객체 선언
 
 #define MAX_LOADSTRING 100
 
