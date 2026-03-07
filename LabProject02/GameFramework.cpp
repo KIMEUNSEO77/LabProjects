@@ -93,3 +93,44 @@ void CGameFramework::OnDestroy()
 		pdxgiDebug->Release();
 #endif
 }
+
+
+// 스왑 체인 생성 코드 구현
+void CGameFramework::CreateSwapChain()
+{
+	RECT rcClient;
+	::GetClientRect(m_hWnd, &rcClient); // 윈도우 클라이언트 영역의 크기 얻기
+	m_nWndClientWidth = rcClient.right - rcClient.left; // 클라이언트 영역의 너비 계산
+	m_nWndClientHeight = rcClient.bottom - rcClient.top; // 클라이언트 영역의 높이 계산
+
+	DXGI_SWAP_CHAIN_DESC1 dxgiSwapChainDesc;
+	::ZeroMemory(&dxgiSwapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC1)); // 스왑 체인 설명 구조체 초기화
+	dxgiSwapChainDesc.Width = m_nWndClientWidth; // 스왑 체인 버퍼의 너비 설정
+	dxgiSwapChainDesc.Height = m_nWndClientHeight; // 스왑 체인 버퍼의 높이 설정
+	dxgiSwapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 스왑 체인 버퍼의 픽셀 형식 설정
+	dxgiSwapChainDesc.SampleDesc.Count = (m_bMsaa4xEnable) ? 4 : 1; // MSAA 샘플 수 설정
+	dxgiSwapChainDesc.SampleDesc.Quality = (m_bMsaa4xEnable) ? (m_nMsaa4xQualityLevels - 1) : 0; // MSAA 품질 수준 설정
+
+	dxgiSwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 스왑 체인 버퍼의 용도 설정
+	dxgiSwapChainDesc.BufferCount = m_nSwapChainBuffers; // 스왑 체인 버퍼 수 설정
+	dxgiSwapChainDesc.Scaling = DXGI_SCALING_NONE; // 스왑 체인 버퍼의 스케일링 모드 설정
+	dxgiSwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; // 스왑 체인 버퍼 교체 효과 설정
+	dxgiSwapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED; // 스왑 체인 버퍼의 알파 모드 설정
+	dxgiSwapChainDesc.Flags = 0; // 스왑 체인 플래그 설정
+
+	DXGI_SWAP_CHAIN_FULLSCREEN_DESC dxgiSwapChainFullScreenDesc;
+	::ZeroMemory(&dxgiSwapChainFullScreenDesc, sizeof(DXGI_SWAP_CHAIN_FULLSCREEN_DESC)); // 전체 화면 스왑 체인 설명 구조체 초기화
+	dxgiSwapChainFullScreenDesc.RefreshRate.Numerator = 60; // 전체 화면 모드의 새로 고침 빈도 분자 설정
+	dxgiSwapChainFullScreenDesc.RefreshRate.Denominator = 1; // 전체 화면 모드의 새로 고침 빈도 분모 설정
+	dxgiSwapChainFullScreenDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED; // 전체 화면 모드의 스캔라인 순서 설정
+	dxgiSwapChainFullScreenDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED; // 전체 화면 모드의 스케일링 모드 설정
+	dxgiSwapChainFullScreenDesc.Windowed = TRUE; // 전체 화면 모드 여부 설정
+
+	m_pdxgiFactory->CreateSwapChainForHwnd(m_pd3dCommandQueue, m_hWnd, 
+		&dxgiSwapChainDesc, &dxgiSwapChainFullScreenDesc, nullptr, 
+		(IDXGISwapChain1**)&m_pdxgiSwapChain); // 윈도우용 스왑 체인 생성
+
+	m_pdxgiFactory->MakeWindowAssociation(m_hWnd, DXGI_MWA_NO_ALT_ENTER); // Alt+Enter 키 조합으로 전체 화면 모드 전환 방지
+
+	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex(); // 현재 스왑 체인 버퍼 인덱스 얻기
+}
