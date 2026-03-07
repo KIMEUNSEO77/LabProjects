@@ -163,6 +163,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+    case WM_SIZE:
+    case WM_LBUTTONDOWN:
+    case WM_LBUTTONUP:
+    case WM_RBUTTONDOWN:
+	case WM_RBUTTONUP:
+    case WM_MOUSEMOVE:
+    case WM_KEYDOWN:
+    case WM_KEYUP:
+        gGameFramework.OnProcessingWindowMessage(hWnd, message, wParam, lParam); // 게임 프레임워크의 윈도우 메시지 처리 함수 호출
+		break;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
