@@ -130,6 +130,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LabProject02.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LabProject02.rc" />
