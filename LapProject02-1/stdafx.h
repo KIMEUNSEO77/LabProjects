@@ -13,3 +13,12 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+
+#include <math.h>
+
+// 윈도우 클라이언트 영역 크기
+#define FRAMEBUFFER_WIDTH 640
+#define FRAMEBUFFER_HEIGHT 480
+
+// DegreeToRadian : 각도를 라디안으로 변환하는 매크로
+#define DegreeToRadian(x) float((x)*3.141592654f/180.0f)
