@@ -1,6 +1,6 @@
-#pragma once
+// Mesh.h: 메쉬 클래스 선언
 
-#include "stdafx.h"
+#pragma once
 
 class CPolygon;
 
@@ -75,8 +75,8 @@ class CPolygon
 {
 public:
 	CPolygon() {}
-	CPolygon(int nVertices) {};
-	virtual ~CPolygon() {}
+	CPolygon(int nVertices);
+	virtual ~CPolygon();
 
 	// 다각형(면)을 구성하는 정점들의 리스트
 	int m_nVertices = 0;
