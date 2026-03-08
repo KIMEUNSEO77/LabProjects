@@ -70,8 +70,8 @@ void CGameFramework::BuildObjects()
 {
 	//카메라를 생성하고 뷰포트와 시야각(FOV)를 설정한다. 
 	CCamera* pCamera = new CCamera();
-	pCamera->SetViewport(0, 0, FRAMEBUFFER_WIDTH,
-		FRAMEBUFFER_HEIGHT);
+	pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH,
+		FRAME_BUFFER_HEIGHT);
 	pCamera->SetFOVAngle(60.0f);
 	//플레이어 게임 객체를 생성하고 카메라와 위치를 설정한다. 
 	m_pPlayer = new CPlayer();

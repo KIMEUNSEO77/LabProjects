@@ -5,6 +5,8 @@
 
 #include "Mesh.h"
 
+class CViewport;
+
 class CCamera
 {
 public:
@@ -31,7 +33,7 @@ private:
 	// 뷰포트
 	CViewport* m_pViewport = nullptr;
 	// 뷰포트의 가로 길이와 새로 길이의 비율(종횡비: Aspect Ratio)
-	float m_fAspectRatio = float(FRAMEBUFFER_WIDTH) / float(FRAMEBUFFER_HEIGHT);
+	float m_fAspectRatio = float(FRAME_BUFFER_WIDTH) / float(FRAME_BUFFER_HEIGHT);
 
 public:
 	// 카메라 변환, 투영변환, 화면 변환 수행
@@ -70,5 +72,5 @@ public:
 	int m_nTop = 0;
 	int m_nWidth = 0;
 	int m_nHeight = 0;
-}
+};
 
