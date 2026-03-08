@@ -1,7 +1,49 @@
 #pragma once
 
+#include "stdafx.h"
+
+class CPolygon;
+
 class CMesh
 {
+public:
+	CMesh() {}
+	CMesh(int nPolygons);
+	virtual ~CMesh();
+
+private:
+	// 인스턴싱을 위해 메쉬는 게임 객체들에게 공유될 수 있음
+	// 다음 참조 값은 메쉬가 공유되는 게임 객체들의 개수를 나타냄
+	int m_nReferences = 0;
+
+public:
+	// 메쉬가 게임 객체에 공유될 때마다 참조 값을 1씩 증가 시킴
+	void AddRef() { m_nReferences++; }
+	// 메쉬를 공유하는 게임 객체가 소멸될 때마다 참조값을 1씩 감소 시킴
+	// 참조값이 0이 되면 메쉬를 소멸시킴
+	void Release() {
+		m_nReferences--; if (m_nReferences <= 0) delete
+			this;
+	}
+	
+private:
+	// 메쉬를 구성하는 다각형들의 리스트
+	int m_nPolygons = 0;
+	CPolygon** m_ppPolygons = nullptr;
+
+public:
+	void SetPolygon(int nIndex, CPolygon* pPolygon);
+
+	// 메쉬를 렌더링
+	virtual void Render(HDC hDCFrameBuffer);
+};
+
+// 직육면체 클래스 선언
+class CCubeMesh : public CMesh
+{
+public:
+	CCubeMesh(float fWidth = 4.0f, float fHeight = 4.0f, float fDepth = 4.0f);
+	virtual ~CCubeMesh() {}
 };
 
 class CPoint3D
