@@ -42,16 +42,14 @@ public:
 	CPoint3D ScreenTransform(CPoint3D& f3Project);
 
 	void SetPosition(float x, float y, float z) {
-		m_fxPosition = x;
-		m_fyPosition = y; m_fzPosition = z;
+		m_fxPosition = x; m_fyPosition = y; m_fzPosition = z;
 	}
 	void SetRotation(float fPitch, float fYaw, float fRoll) {
 		m_fxRotation = fPitch; m_fyRotation = fYaw; m_fzRotation = fRoll;
 	}
 
 	// 카메라의 뷰포트와 시야각을 설정
-	void SetViewport(int xStart, int yStart, int nWidth, int
-		nHeight);
+	void SetViewport(int xStart, int yStart, int nWidth, int nHeight);
 	void SetFOVAngle(float fFOVAngle);
 
 	// 카메라를 이동하고 회전
@@ -63,8 +61,7 @@ class CViewport
 {
 public:
 	CViewport(int nLeft, int nTop, int nWidth, int nHeight) {
-		m_nLeft
-			= nLeft; m_nTop = nTop; m_nWidth = nWidth; m_nHeight = nHeight;
+		m_nLeft = nLeft; m_nTop = nTop; m_nWidth = nWidth; m_nHeight = nHeight;
 	}
 	virtual ~CViewport() {}
 

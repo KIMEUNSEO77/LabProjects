@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include "Camera.h"
 
+// 플레이어 객체도 게임 객체이기 때문에 CGameObject 클래스를 상속받음
 class CPlayer : public CGameObject
 {
 public:
@@ -22,6 +23,7 @@ public:
 	void Move(float x, float y, float z);
 	void Rotate(float x, float y, float z);
 	void SetCamera(CCamera* pCamera) { m_pCamera = pCamera; }
+
 	CCamera* GetCamera() { return(m_pCamera); }
 };
 

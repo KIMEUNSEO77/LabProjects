@@ -28,8 +28,10 @@ public:
 	
 private:
 	// 메쉬를 구성하는 다각형들의 리스트
-	int m_nPolygons = 0;
-	CPolygon** m_ppPolygons = nullptr;
+	int m_nPolygons = 0;    // 메쉬를 구성하는 폴리곤(면) 개수
+	CPolygon** m_ppPolygons = nullptr;   // 폴리곤 포인터를 저장하는 배열의 주소
+	// 폴리곤을 포인터로 저장하기 때문에 이중 포인터를 사용
+	// 다형성, 메모리 관리, 객체 공유 가능한 이유 때문.
 
 public:
 	void SetPolygon(int nIndex, CPolygon* pPolygon);
@@ -71,6 +73,7 @@ public:
 	CPoint3D m_f3Position;
 };
 
+// 하나의 면
 class CPolygon
 {
 public:
@@ -79,8 +82,8 @@ public:
 	virtual ~CPolygon();
 
 	// 다각형(면)을 구성하는 정점들의 리스트
-	int m_nVertices = 0;
-	CVertex* m_pVertices = nullptr;
+	int m_nVertices = 0;    // 폴리곤 구성하는 정점 개수
+	CVertex* m_pVertices = nullptr;   // 정점을 저장하는 배열의 주소
 
 	void SetVertex(int nIndex, CVertex vertex);
 };

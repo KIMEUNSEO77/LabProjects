@@ -7,9 +7,11 @@ void CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 {
 	m_hInstance = hInstance;
 	m_hWnd = hMainWnd;
-	//렌더링 화면을 생성한다. 
+
+	// 렌더링 화면을 생성
 	BuildFrameBuffer();
-	//플레이어와 게임 세계(씬)을 생성한다. 
+
+	// 플레이어와 게임 세계(씬)을 생성
 	BuildObjects();
 }
 
@@ -30,9 +32,8 @@ void CGameFramework::BuildFrameBuffer()
 	::GetClientRect(m_hWnd, &m_rcClient);
 	HDC hDC = ::GetDC(m_hWnd);
 	m_hDCFrameBuffer = ::CreateCompatibleDC(hDC);
-	m_hBitmapFrameBuffer = ::CreateCompatibleBitmap(hDC,
-		m_rcClient.right - m_rcClient.left, m_rcClient.bottom -
-		m_rcClient.top);
+	m_hBitmapFrameBuffer = ::CreateCompatibleBitmap(hDC, m_rcClient.right - m_rcClient.left, 
+		m_rcClient.bottom - m_rcClient.top);
 	::SelectObject(m_hDCFrameBuffer, m_hBitmapFrameBuffer);
 	::ReleaseDC(m_hWnd, hDC);
 	::SetBkMode(m_hDCFrameBuffer, TRANSPARENT);
@@ -45,11 +46,9 @@ void CGameFramework::ClearFrameBuffer(DWORD dwColor)
 	HPEN hPen = ::CreatePen(PS_SOLID, 0, dwColor);
 	HPEN hOldPen = (HPEN)::SelectObject(m_hDCFrameBuffer, hPen);
 	HBRUSH hBrush = ::CreateSolidBrush(dwColor);
-	HBRUSH hOldBrush = (HBRUSH)::SelectObject(m_hDCFrameBuffer,
-		hBrush);
+	HBRUSH hOldBrush = (HBRUSH)::SelectObject(m_hDCFrameBuffer, hBrush);
 
-	::Rectangle(m_hDCFrameBuffer, m_rcClient.left, m_rcClient.top,
-		m_rcClient.right, m_rcClient.bottom);
+	::Rectangle(m_hDCFrameBuffer, m_rcClient.left, m_rcClient.top, m_rcClient.right, m_rcClient.bottom);
 	::SelectObject(m_hDCFrameBuffer, hOldBrush);
 	::SelectObject(m_hDCFrameBuffer, hOldPen);
 	::DeleteObject(hPen);
@@ -68,28 +67,29 @@ void CGameFramework::PresentFrameBuffer()
 
 void CGameFramework::BuildObjects()
 {
-	//카메라를 생성하고 뷰포트와 시야각(FOV)를 설정한다. 
+	// 카메라를 생성하고 뷰포트와 시야각(FOV)를 설정
 	CCamera* pCamera = new CCamera();
-	pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH,
-		FRAME_BUFFER_HEIGHT);
+	pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 	pCamera->SetFOVAngle(60.0f);
-	//플레이어 게임 객체를 생성하고 카메라와 위치를 설정한다. 
+
+	// 플레이어 게임 객체를 생성하고 카메라와 위치를 설정
 	m_pPlayer = new CPlayer();
 	m_pPlayer->SetCamera(pCamera);
 	m_pPlayer->SetPosition(0.0f, 3.0f, -40.0f);
-	//씬 객체를 생성하고 게임 객체들을 생성한다. 
+
+	// 씬 객체를 생성하고 게임 객체들을 생성
 	m_pScene = new CScene();
 	m_pScene->BuildObjects();
 }
 void CGameFramework::ReleaseObjects()
 {
-	//씬 객체의 게임 객체들을 소멸하고, 씬 객체와 플레이어 객체를 소멸한다. 
+	// 씬 객체의 게임 객체들을 소멸하고, 씬 객체와 플레이어 객체를 소멸
 	if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) delete m_pScene;
 	if (m_pPlayer) delete m_pPlayer;
 }
 
-// 키보드 입력을 처리해 플레이어 객체를 이동함
+// 키보드 입력을 처리해 플레이어 객체를 이동
 void CGameFramework::ProcessInput()
 {
 	static UCHAR pKeyBuffer[256];
@@ -116,15 +116,19 @@ void CGameFramework::AnimateObjects()
 // 사용자 입력을 받아 게임 객체들을 움직이고, 그 결과에 따라 게임 세계를 화면으로 렌더링
 void CGameFramework::FrameAdvance()
 {
-	//사용자 입력을 처리한다.
+	// 사용자 입력을 처리
 	ProcessInput();
-	//게임 세계를 애니메이션(움직이게)한다.
+
+	// 게임 세계를 애니메이션
 	AnimateObjects();
-	//렌더링을 할 대상 화면(비트맵)을 지운다.
+
+	// 렌더링을 할 대상 화면(비트맵)을 지움
 	ClearFrameBuffer(RGB(90, 103, 224));
-	//씬을 렌더링한다.
+
+	// 씬을 렌더링
 	CCamera* pCamera = m_pPlayer->GetCamera();
 	if (m_pScene) m_pScene->Render(m_hDCFrameBuffer, pCamera);
-	//렌더링을 한 화면(비트맵)을 클라이언트 영역으로 복사한다.
+
+	// 렌더링을 한 화면(비트맵)을 클라이언트 영역으로 복사
 	PresentFrameBuffer();
 }

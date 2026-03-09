@@ -30,18 +30,22 @@ private:
 	CScene* m_pScene = nullptr;
 
 public:
-	//프레임워크를 생성하는 함수이다(주 윈도우가 생성되면 호출된다). 
+	// 프레임워크를 생성하는 함수(주 윈도우가 생성되면 호출)
 	void OnCreate(HINSTANCE hInstance, HWND hMainWnd);
-	//프레임워크를 소멸하는 함수이다(응용프로그램이 종료되면 호출된다). 
+
+	// 프레임워크를 소멸하는 함수(응용 프로그램이 종료되면 호출)
 	void OnDestroy();
-	//게임 세계를 렌더링할 비트맵 표면을 생성하고, 지우고, 클라이언트 영역으로 복사한다. 
+
+	// 게임 세계를 렌더링할 비트맵 표면을 생성하고, 지우고, 클라이언트 영역으로 복사 
 	void BuildFrameBuffer();
 	void ClearFrameBuffer(DWORD dwColor);
 	void PresentFrameBuffer();
-	//렌더링할 메쉬와 게임 객체를 생성하고 소멸하는 함수이다. 
+
+	// 렌더링할 메쉬와 게임 객체를 생성하고 소멸하는 함수
 	void BuildObjects();
 	void ReleaseObjects();
-	//프레임워크의 핵심(사용자 입력, 애니메이션, 렌더링)을 구성하는 함수이다. 
+
+	// 프레임워크의 핵심(사용자 입력, 애니메이션, 렌더링)을 구성하는 함수
 	void ProcessInput();
 	void AnimateObjects();
 	void FrameAdvance();

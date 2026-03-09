@@ -20,9 +20,10 @@ public:
 	virtual void BuildObjects();
 	virtual void ReleaseObjects();
 
-	//게임 객체들을 애니메이션한다.
+	// 게임 객체들을 애니메이션
 	virtual void Animate(float fElapsedTime);
-	//게임 객체들을 렌더링한다.
+
+	// 게임 객체들을 렌더링
 	virtual void Render(HDC hDCFrameBuffer, CCamera* pCamera);
 };
 
