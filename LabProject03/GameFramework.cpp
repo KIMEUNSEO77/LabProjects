@@ -6,6 +6,8 @@
 
 CGameFramework::CGameFramework()
 {
+	_tcscpy_s(m_pszFrameRate, _T("LapProject ("));
+
 	m_pdxgiFactory = nullptr;
 	m_pdxgiSwapChain = nullptr;
 	m_pd3dDevice = nullptr;
@@ -424,6 +426,9 @@ void CGameFramework::WaitForGpuComplete()
 
 void CGameFramework::FrameAdvance()
 {
+	//타이머의 시간이 갱신되도록 하고 프레임 레이트를 계산한다. 
+	m_GameTimer.Tick(0.0f);
+
 	ProcessInput();
 	AnimateObjects();
 
@@ -502,4 +507,12 @@ void CGameFramework::FrameAdvance()
 	m_pdxgiSwapChain->Present1(1, 0, &dxgiPresentParameters);
 
 	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
+
+	//m_pdxgiSwapChain->Present(0, 0);
+
+	//::_itow_s(m_nCurrentFrameRate, (m_pszFrameRate + 12), 37, 10);
+	//::wcscat_s((m_pszFrameRate + 12), 37, _T(" FPS)"));
+
+	m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
+	::SetWindowText(m_hWnd, m_pszFrameRate);
 }
