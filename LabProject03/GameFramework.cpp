@@ -514,6 +514,7 @@ void CGameFramework::FrameAdvance()
 	//::_itow_s(m_nCurrentFrameRate, (m_pszFrameRate + 12), 37, 10);
 	//::wcscat_s((m_pszFrameRate + 12), 37, _T(" FPS)"));
 
+	// GetTimer에게 프레임 레이트를 계산하도록 하고, 프레임 레이트를 문자열로 변환하여 주 윈도우의 캡션에 출력
 	m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
 	::SetWindowText(m_hWnd, m_pszFrameRate);
 }
