@@ -55,9 +55,9 @@ private:
 	D3D12_VIEWPORT m_d3dViewport; // 뷰포트 구조체
 	D3D12_RECT m_d3dScissorRect; // 가위 사각형 구조체
 
-	//다음은 게임 프레임워크에서 사용할 타이머이다.
+	// 게임 프레임워크에서 사용할 타이머
 	CGameTimer m_GameTimer;
-	//다음은 프레임 레이트를 주 윈도우의 캡션에 출력하기 위한 문자열이다.
+	// 프레임 레이트를 주 윈도우의 캡션에 출력하기 위한 문자열
 	_TCHAR m_pszFrameRate[50];
 
 public:
