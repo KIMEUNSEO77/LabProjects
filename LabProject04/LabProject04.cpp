@@ -147,6 +147,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
 
+	// 전체 화면 모드로 전환하는 코드
+#ifdef _WITH_SWAPCHAIN_FULLSCREEN_STATE
+	gGameFramework.ChangeSwapChainState(); // 스왑 체인 전체 화면 모드로 전환
+#endif
+
     return TRUE;
 }
 
