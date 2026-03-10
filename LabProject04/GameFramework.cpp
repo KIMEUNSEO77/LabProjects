@@ -97,42 +97,48 @@ void CGameFramework::OnDestroy()
 }
 
 
-// 스왑 체인 생성 코드 구현
+// 스왑 체인 생성 코드 구현 (그리는 백버퍼를 화면에 보여주는 프론트 버퍼와 교체하는 역할)
 void CGameFramework::CreateSwapChain()
 {
 	RECT rcClient;
-	::GetClientRect(m_hWnd, &rcClient);
+	::GetClientRect(m_hWnd, &rcClient);   // 현재 윈도우 클라이언트 영역의 크기를 얻어옴
 	m_nWndClientWidth = rcClient.right - rcClient.left;
 	m_nWndClientHeight = rcClient.bottom - rcClient.top;
 
-	DXGI_SWAP_CHAIN_DESC1 dxgiSwapChainDesc;
-	::ZeroMemory(&dxgiSwapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC1));
+	DXGI_SWAP_CHAIN_DESC1 dxgiSwapChainDesc;   // 스왑 체인 설명(설정) 구조체 ex) 버퍼 수, 포맷, 샘플링 등
+	::ZeroMemory(&dxgiSwapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC1));  // 구조체 초기화
 
-	dxgiSwapChainDesc.Width = m_nWndClientWidth;
-	dxgiSwapChainDesc.Height = m_nWndClientHeight;
-	dxgiSwapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	dxgiSwapChainDesc.SampleDesc.Count = (m_bMsaa4xEnable) ? 4 : 1;
+	dxgiSwapChainDesc.Width = m_nWndClientWidth;    // 백버퍼 너비 설정
+	dxgiSwapChainDesc.Height = m_nWndClientHeight;  // 백버퍼 높이 설정
+	dxgiSwapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;  // 백버퍼 포맷 설정 (8비트 RGBA)
+	dxgiSwapChainDesc.SampleDesc.Count = (m_bMsaa4xEnable) ? 4 : 1;   // 샘플링 설정 (4x MSAA 사용 여부에 따라 샘플 수 결정)
 	dxgiSwapChainDesc.SampleDesc.Quality = (m_bMsaa4xEnable) ? (m_nMsaa4xQualityLevels - 1) : 0;
-	dxgiSwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	dxgiSwapChainDesc.BufferCount = m_nSwapChainBuffers;
-	dxgiSwapChainDesc.Scaling = DXGI_SCALING_NONE;
-	dxgiSwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	dxgiSwapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+
+	dxgiSwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;  // 버퍼 용도 설정 (렌더 타겟 출력으로 사용)
+	dxgiSwapChainDesc.BufferCount = m_nSwapChainBuffers;   // 버퍼 수 설정 (2 또는 3)
+	dxgiSwapChainDesc.Scaling = DXGI_SCALING_NONE;  // 화면 크기와 버퍼 크기가 다를 때 스케일링 설정 (없음)
+	dxgiSwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;  // 스왑 효과 설정 (플립 디스카드 - 최신 권장 방식 - 백버퍼를 화면으로 넘기고 이 전 내용은 버림)
+	dxgiSwapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;     // 알파 처리 방식 (명시되지 않음)
+
+	// 전체 화면 모드에서 모드 전환을 허용하는 플래그 설정 (모드 전환이 필요한 경우)
 #ifdef _WITH_SWAPCHAIN_FULLSCREEN_STATE
+	// 전체 화면 모드 전환 시 디스플레이 모드 변경을 허용하는 플래그 설정 (사용자 정의 매크로 _WITH_SWAPCHAIN_FULLSCREEN_STATE가 정의된 경우)
 	dxgiSwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 #else
 	dxgiSwapChainDesc.Flags = 0;
 #endif
 
+	// 전체 화면 모드 설정 구조체 초기화 (모드 전환이 필요한 경우)
 	DXGI_SWAP_CHAIN_FULLSCREEN_DESC dxgiSwapChainFullScreenDesc;
 	::ZeroMemory(&dxgiSwapChainFullScreenDesc, sizeof(DXGI_SWAP_CHAIN_FULLSCREEN_DESC));
 
-	dxgiSwapChainFullScreenDesc.RefreshRate.Numerator = 60;
-	dxgiSwapChainFullScreenDesc.RefreshRate.Denominator = 1;
-	dxgiSwapChainFullScreenDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	dxgiSwapChainFullScreenDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	dxgiSwapChainFullScreenDesc.Windowed = TRUE;
+	dxgiSwapChainFullScreenDesc.RefreshRate.Numerator = 60;  // 전체 화면 모드에서의 새로 고침 빈도(주사율) 설정 (60Hz)
+	dxgiSwapChainFullScreenDesc.RefreshRate.Denominator = 1; // 주사율의 분모
+	dxgiSwapChainFullScreenDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED; // 스캔라인 순서 설정 (명시되지 않음)
+	dxgiSwapChainFullScreenDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED; // 전체 화면 모드에서의 화면 크기 조정 방식 설정 (명시되지 않음)
+	dxgiSwapChainFullScreenDesc.Windowed = TRUE;  // 전체 화면 모드 여부 설정 (TRUE로 설정하여 창 모드로 시작)
 
+	// 실제 스왑 체인 생성 함수 호출 (DXGI 팩토리의 CreateSwapChainForHwnd 메서드 사용)
 	HRESULT hResult = m_pdxgiFactory->CreateSwapChainForHwnd(
 		m_pd3dCommandQueue,
 		m_hWnd,
@@ -148,10 +154,14 @@ void CGameFramework::CreateSwapChain()
 		return;
 	}
 
+	// 전체 화면 모드에서 Alt+Enter 키 조합으로 모드 전환을 방지하는 플래그 설정
 	m_pdxgiFactory->MakeWindowAssociation(m_hWnd, DXGI_MWA_NO_ALT_ENTER);
 
+	// 스왑 체인에서 현재 백버퍼의 인덱스를 얻어옴 (백버퍼는 화면에 보여지는 버퍼로, 렌더링할 때는 다른 버퍼를 사용)
+	// 나중에 렌더링할 때 어느 백버퍼에 렌더링할지 결정하는 데 사용
 	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
 
+	// 전체 화면 전환 기능을 사용하지 않는 경우 렌더 타겟 뷰를 생성하는 함수 호출 (백버퍼에 대한 렌더 타겟 뷰 생성)
 #ifndef _WITH_SWAPCHAIN_FULLSCREEN_STATE
 	CreateRenderTargetView();
 #endif
@@ -541,15 +551,16 @@ void CGameFramework::FrameAdvance()
 	::SetWindowText(m_hWnd, m_pszFrameRate);
 }
 
+// F9키가 눌려지면 윈도우 모드와 전체화면 모드의 전환을 처리하는 함수
 void CGameFramework::ChangeSwapChainState()
 {
-	WaitForGpuComplete();
+	WaitForGpuComplete();  // GPU가 모든 명령을 완료할 때까지 대기(중간에 모드 전환이 일어나면 GPU가 명령을 처리할 수 없으므로)
 
-	BOOL bFullScreenState = FALSE;
-	m_pdxgiSwapChain->GetFullscreenState(&bFullScreenState, NULL);
-	m_pdxgiSwapChain->SetFullscreenState(!bFullScreenState, NULL);
+	BOOL bFullScreenState = FALSE;  // 현재 스왑 체인이 전체 화면 모드인지 여부를 얻어옴
+	m_pdxgiSwapChain->GetFullscreenState(&bFullScreenState, NULL);  // 전체 화면 모드인지 여부를 얻어옴
+	m_pdxgiSwapChain->SetFullscreenState(!bFullScreenState, NULL);  // 현재 모드의 반대 모드로 전환 (전체 화면이면 창 모드로, 창 모드이면 전체 화면으로)
 
-	DXGI_MODE_DESC dxgiTargetParameters;
+	DXGI_MODE_DESC dxgiTargetParameters;  // 출력 모드 정보를 담는 구조체
 	dxgiTargetParameters.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	dxgiTargetParameters.Width = m_nWndClientWidth;
 	dxgiTargetParameters.Height = m_nWndClientHeight;
@@ -557,17 +568,23 @@ void CGameFramework::ChangeSwapChainState()
 	dxgiTargetParameters.RefreshRate.Denominator = 1;
 	dxgiTargetParameters.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 	dxgiTargetParameters.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	m_pdxgiSwapChain->ResizeTarget(&dxgiTargetParameters);
+	m_pdxgiSwapChain->ResizeTarget(&dxgiTargetParameters);  // 전체 화면 모드로 전환할 때 디스플레이 모드가 변경되도록 스왑 체인의 출력 모드를 새로 고침
 
+	// 백버퍼 리소스를 해제하고 스왑 체인의 버퍼 크기를 새로 고침 (전체 화면 모드로 전환할 때 버퍼 크기가 변경될 수 있으므로)
 	for (int i = 0; i < m_nSwapChainBuffers; i++) 
 		if (m_ppd3dSwapChainBackBuffers[i])
 			m_ppd3dSwapChainBackBuffers[i]->Release();
 
+	// 현재 스왑 체인의 버퍼 크기를 새로 고침 (전체 화면 모드로 전환할 때 버퍼 크기가 변경될 수 있으므로)
 	DXGI_SWAP_CHAIN_DESC dxgiSwapChainDesc;
 	m_pdxgiSwapChain->GetDesc(&dxgiSwapChainDesc);
+	// 실제 백버퍼들의 크기를 새로 고침 (전체 화면 모드로 전환할 때 버퍼 크기가 변경될 수 있으므로) - 스왑 체인의 버퍼 크기를 새로 고침
 	m_pdxgiSwapChain->ResizeBuffers(m_nSwapChainBuffers, m_nWndClientWidth,
 		m_nWndClientHeight, dxgiSwapChainDesc.BufferDesc.Format, dxgiSwapChainDesc.Flags);
+	// 현재 백버퍼 인덱스 새로 고침 (전체 화면 모드로 전환할 때 버퍼 크기가 변경될 수 있으므로)
 	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
 
+	// 새 백버퍼들의 렌더 타겟 뷰를 새로 고침 
+	// RTV(Render Target View)는 GPU가 렌더링 결과를 기록할 Render Target Resource(버퍼)에 접근할 수 있도록 하는 View 객체
 	CreateRenderTargetView();
 }
