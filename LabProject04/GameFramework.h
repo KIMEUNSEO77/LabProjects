@@ -86,5 +86,7 @@ public:
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam); // 마우스 메시지 처리
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam); // 키보드 메시지 처리
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam); // 윈도우 메시지 처리
+
+	void ChangeSwapChainState(); // 스왑 체인 상태 변경 (예: 전체 화면과 창 모드 간 전환)
 };
 
