@@ -37,7 +37,9 @@ CGameFramework::CGameFramework()
 	for (int i = 0; i < m_nSwapChainBuffers; i++) m_nFenceValues[i] = 0;
 	m_pScene = NULL;
 
+	// 뷰포트: 3d좌표를 화면좌표로 변환할 때, 어떤 영역에 그릴지 설정하는 구조체
 	m_d3dViewport = { 0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f };
+	// 가위 사각형: 이미 변환된 영역을 잘라냄??
 	m_d3dScissorRect = { 0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT };
 }
 
@@ -356,13 +358,19 @@ void CGameFramework::CreateDepthStencilView()
 
 void CGameFramework::BuildObjects()
 {
+	// 게임 씬 생성
 	m_pScene = new CScene();
+	// 게임 씬에 게임 오브젝트 생성
 	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
+
+	// 타이머 리셋
 	m_GameTimer.Reset();
 }
 void CGameFramework::ReleaseObjects()
 {
+	// 게임 씬에 생성된 게임 오브젝트 해제
 	if (m_pScene) m_pScene->ReleaseObjects();
+	// 게임 씬 해제
 	if (m_pScene) delete m_pScene;
 }
 
@@ -445,7 +453,7 @@ void CGameFramework::ProcessInput()
 
 void CGameFramework::AnimateObjects()
 {
-
+	// 게임 씬에 생성된 게임 오브젝트를 애니메이션
 	if (m_pScene) m_pScene->AnimateObjects(m_GameTimer.GetTimeElapsed());
 }
 
@@ -466,6 +474,8 @@ void CGameFramework::WaitForGpuComplete()
 	}
 	*/
 
+	// GPU 동기화 방식이 단일 Fence에서 여러 Fence로 변경됨에 따라, 
+	// 현재 프레임에서 사용할 Fence 값을 증가시키고, 해당 Fence 값이 GPU에서 완료될 때까지 기다리는 방식으로 변경
 	UINT64 nFenceValue = ++m_nFenceValues[m_nSwapChainBufferIndex];
 	HRESULT hResult = m_pd3dCommandQueue->Signal(m_pd3dFence, nFenceValue);
 	if (m_pd3dFence->GetCompletedValue() < nFenceValue)
@@ -564,8 +574,12 @@ void CGameFramework::FrameAdvance()
 	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
 	*/
 
+	// 프리젠트 호출을 간단히 함.
+	// Present1은 변환 일부 내용만 갱신하는 등의 고급기능을 제공 
+	// 여기서는 전체 화면을 갱신하므로 Present1 대신 Present를 사용
 	m_pdxgiSwapChain->Present(0, 0);
 
+	// 프레임 전환, 백버퍼 인덱스 관리를 함수로 옮김.
 	MoveToNextFrame();
 
 	// GetTimer에게 프레임 레이트를 계산하도록 하고, 프레임 레이트를 문자열로 변환하여 주 윈도우의 캡션에 출력
@@ -611,11 +625,18 @@ void CGameFramework::ChangeSwapChainState()
 	CreateRenderTargetView();
 }
 
+// 다음 프레임으로 넘어가기 전, 지금 사용할 백버퍼가 GPU에서 안전한지 확인하는 함수
 void CGameFramework::MoveToNextFrame()
 {
+	// 현재 스왑체인에서 백버퍼 번호를 얻어옴
 	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
+
+	// 그 백버퍼에 대한 값을 증가시킴
 	UINT64 nFenceValue = ++m_nFenceValues[m_nSwapChainBufferIndex];
+	// GPU명령큐에서 명령이 끝나면, 펜스 값을 이 값으로 올리라고 표시
 	HRESULT hResult = m_pd3dCommandQueue->Signal(m_pd3dFence, nFenceValue);
+
+	// GPU가 아직 그 값에 도달하지 못했다면 CPU가 대기
 	if (m_pd3dFence->GetCompletedValue() < nFenceValue)
 	{
 		hResult = m_pd3dFence->SetEventOnCompletion(nFenceValue, m_hFenceEvent);
