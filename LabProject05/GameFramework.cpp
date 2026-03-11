@@ -356,11 +356,14 @@ void CGameFramework::CreateDepthStencilView()
 
 void CGameFramework::BuildObjects()
 {
-
+	m_pScene = new CScene();
+	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
+	m_GameTimer.Reset();
 }
 void CGameFramework::ReleaseObjects()
 {
-
+	if (m_pScene) m_pScene->ReleaseObjects();
+	if (m_pScene) delete m_pScene;
 }
 
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam,
@@ -443,12 +446,13 @@ void CGameFramework::ProcessInput()
 void CGameFramework::AnimateObjects()
 {
 
+	if (m_pScene) m_pScene->AnimateObjects(m_GameTimer.GetTimeElapsed());
 }
 
 void CGameFramework::WaitForGpuComplete()
 {
-	m_nFenceValue++;
-
+	//m_nFenceValue++;
+	/*
 	// CPU 펜스 값 증가
 	const UINT64 nFence = m_nFenceValue;
 	HRESULT hResult = m_pd3dCommandQueue->Signal(m_pd3dFence, nFence);
@@ -458,6 +462,15 @@ void CGameFramework::WaitForGpuComplete()
 	{
 		// 펜스의 현재 값이 설정한 값보다 작으면 펜스의 현재 값이 설정한 값이 될 때까지 기다림
 		hResult = m_pd3dFence->SetEventOnCompletion(nFence, m_hFenceEvent);
+		::WaitForSingleObject(m_hFenceEvent, INFINITE);
+	}
+	*/
+
+	UINT64 nFenceValue = ++m_nFenceValues[m_nSwapChainBufferIndex];
+	HRESULT hResult = m_pd3dCommandQueue->Signal(m_pd3dFence, nFenceValue);
+	if (m_pd3dFence->GetCompletedValue() < nFenceValue)
+	{
+		hResult = m_pd3dFence->SetEventOnCompletion(nFenceValue, m_hFenceEvent);
 		::WaitForSingleObject(m_hFenceEvent, INFINITE);
 	}
 }
@@ -474,6 +487,10 @@ void CGameFramework::FrameAdvance()
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
+	// 뷰포트와 씨저 사각형을 설정
+	m_pd3dCommandList->RSSetViewports(1, &m_d3dViewport);
+	m_pd3dCommandList->RSSetScissorRects(1, &m_d3dScissorRect);
+
 	// 현재 렌더 타겟에 대한 프리젠트가 끝나기를 기다림 
 	// 프리젠트가 끝나면 렌더 타겟 버퍼의 상태는 프리젠트 상태 (D3D12_RESOURCE_STATE_PRESENT)에서 
 	// 렌더 타겟 상태(D3D12_RESOURCE_STATE_RENDER_TARGET)로 바뀜
@@ -488,34 +505,32 @@ void CGameFramework::FrameAdvance()
 	d3dResourceBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	m_pd3dCommandList->ResourceBarrier(1, &d3dResourceBarrier);
 
-	// 뷰포트와 씨저 사각형을 설정
-	m_pd3dCommandList->RSSetViewports(1, &m_d3dViewport);
-	m_pd3dCommandList->RSSetScissorRects(1, &m_d3dScissorRect);
-
 	// 현재의 렌더 타겟에 해당하는 서술자의 CPU 주소(핸들)를 계산
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle =
 		m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBufferIndex *
 		m_nRtvDescriptorIncrementSize);
 
-	// 원하는 색상으로 렌더 타겟(뷰)을 지움
-	float pfClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
-	m_pd3dCommandList->ClearRenderTargetView(d3dRtvCPUDescriptorHandle,
-		pfClearColor/*Colors::Azure*/, 0, NULL);
-
 	// 깊이-스텐실 서술자의 CPU 주소를 계산
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dDsvCPUDescriptorHandle =
 		m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-
-	//원하는 값으로 깊이-스텐실(뷰)을 지움
-	m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle,
-		D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
 
 	// 렌더 타겟 뷰(서술자)와 깊이-스텐실 뷰(서술자)를 출력-병합 단계(OM)에 연결
 	m_pd3dCommandList->OMSetRenderTargets(1, &d3dRtvCPUDescriptorHandle, TRUE,
 		&d3dDsvCPUDescriptorHandle);
 
+	// 원하는 색상으로 렌더 타겟(뷰)을 지움
+	float pfClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
+	m_pd3dCommandList->ClearRenderTargetView(d3dRtvCPUDescriptorHandle,
+		pfClearColor/*Colors::Azure*/, 0, NULL);
+
+	//원하는 값으로 깊이-스텐실(뷰)을 지움
+	m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle,
+		D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
+
 	// 렌더링 코드는 여기에 추가 ...
+
+	if (m_pScene) m_pScene->Render(m_pd3dCommandList);
 
 	// 현재 렌더 타겟에 대한 렌더링이 끝나기를 기다림
 	// GPU가 렌더 타겟(버퍼)을 더 이상 사용하지 않으면
@@ -530,13 +545,14 @@ void CGameFramework::FrameAdvance()
 
 	// 명령 리스트를 명령 큐에 추가하여 실행
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
-	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
+	m_pd3dCommandQueue->ExecuteCommandLists(_countof(ppd3dCommandLists), ppd3dCommandLists);
 
 	// GPU가 모든 명령 리스트를 실행할 때 까지 기다림
 	WaitForGpuComplete();
 
 	// 스왑체인을 프리젠트 
 	// 현재 렌더 타겟(후면버퍼)의 내용이 전면버퍼로 옮겨지고 렌더 타겟 인덱스가 바뀜
+	/*
 	DXGI_PRESENT_PARAMETERS dxgiPresentParameters;
 	dxgiPresentParameters.DirtyRectsCount = 0;
 	dxgiPresentParameters.pDirtyRects = NULL;
@@ -546,11 +562,11 @@ void CGameFramework::FrameAdvance()
 	m_pdxgiSwapChain->Present1(1, 0, &dxgiPresentParameters);
 
 	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
+	*/
 
-	//m_pdxgiSwapChain->Present(0, 0);
+	m_pdxgiSwapChain->Present(0, 0);
 
-	//::_itow_s(m_nCurrentFrameRate, (m_pszFrameRate + 12), 37, 10);
-	//::wcscat_s((m_pszFrameRate + 12), 37, _T(" FPS)"));
+	MoveToNextFrame();
 
 	// GetTimer에게 프레임 레이트를 계산하도록 하고, 프레임 레이트를 문자열로 변환하여 주 윈도우의 캡션에 출력
 	m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
@@ -593,4 +609,16 @@ void CGameFramework::ChangeSwapChainState()
 	// 새 백버퍼들의 렌더 타겟 뷰를 새로 고침 
 	// RTV(Render Target View)는 GPU가 렌더링 결과를 기록할 Render Target Resource(버퍼)에 접근할 수 있도록 하는 View 객체
 	CreateRenderTargetView();
+}
+
+void CGameFramework::MoveToNextFrame()
+{
+	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
+	UINT64 nFenceValue = ++m_nFenceValues[m_nSwapChainBufferIndex];
+	HRESULT hResult = m_pd3dCommandQueue->Signal(m_pd3dFence, nFenceValue);
+	if (m_pd3dFence->GetCompletedValue() < nFenceValue)
+	{
+		hResult = m_pd3dFence->SetEventOnCompletion(nFenceValue, m_hFenceEvent);
+		::WaitForSingleObject(m_hFenceEvent, INFINITE);
+	}
 }
