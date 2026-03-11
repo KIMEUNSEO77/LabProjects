@@ -68,6 +68,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shader.hlsl" />
+    <FxCompile Include="Shaders.hlsl" />
   </ItemGroup>
 </Project>

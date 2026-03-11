@@ -1,5 +1,8 @@
 // Shader.hlsl
 
+// HLSL(High-Level Shading Language)로, DirectX에서 GPU를 작성하는 언어
+// 
+
 float4 main( float4 pos : POSITION ) : SV_POSITION
 {
 	return pos;
