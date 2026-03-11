@@ -61,6 +61,8 @@ private:
 	// 프레임 레이트를 주 윈도우의 캡션에 출력하기 위한 문자열
 	_TCHAR m_pszFrameRate[50];
 
+	CScene* m_pScene; // 게임 씬 포인터 (게임의 모든 오브젝트와 로직을 관리하는 클래스)
+
 public:
 	CGameFramework();
 	~CGameFramework();

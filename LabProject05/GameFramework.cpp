@@ -29,10 +29,16 @@ CGameFramework::CGameFramework()
 
 	m_hFenceEvent = nullptr;
 	m_pd3dFence = nullptr;
-	m_nFenceValue = 0;
+	//m_nFenceValue = 0;
 
 	m_nWndClientWidth = FRAME_BUFFER_WIDTH;
 	m_nWndClientHeight = FRAME_BUFFER_HEIGHT;
+
+	for (int i = 0; i < m_nSwapChainBuffers; i++) m_nFenceValues[i] = 0;
+	m_pScene = NULL;
+
+	m_d3dViewport = { 0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f };
+	m_d3dScissorRect = { 0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT };
 }
 
 CGameFramework::~CGameFramework()
