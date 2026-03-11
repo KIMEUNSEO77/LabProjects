@@ -89,5 +89,6 @@ public:
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam); // 윈도우 메시지 처리
 
 	void ChangeSwapChainState(); // 스왑 체인 상태 변경 (예: 전체 화면과 창 모드 간 전환)
+	void MoveToNextFrame(); // 다음 프레임으로 이동 (GPU와의 동기화 포함)
 };
 
