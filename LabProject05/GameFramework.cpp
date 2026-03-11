@@ -227,7 +227,7 @@ void CGameFramework::CreateDirect3DDevice()
 	// 펜스를 생성하고 펜스 값을 0으로 설정
 	hResult = m_pd3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, __uuidof(ID3D12Fence),
 		(void**)&m_pd3dFence);
-	m_nFenceValue = 0;
+	//m_nFenceValue = 0;
 
 
 	// 펜스와 동기화를 위한 이벤트 객체를 생성한다(이벤트 객체의 초기값을 FALSE) 
