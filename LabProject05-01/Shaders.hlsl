@@ -28,16 +28,15 @@ float4 VSMain(uint nVertexID : SV_VertexID) : SV_POSITION
     return (output);
 }
 
-#define FRAME_BUFFER_WIDTH 640.0f
-#define FRAME_BUFFER_HEIGHT 480.0f
+#define FRAME_BUFFER_WIDTH 1280.0f
+#define FRAME_BUFFER_HEIGHT 720.0f
 
 
 // «»ºø ºŒ¿Ã¥ı∏¶ ¡§¿«
 float4 PSMain(float4 input : SV_POSITION) : SV_TARGET
 {
     float4 cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    cColor.r = input.x / FRAME_BUFFER_WIDTH;
-    cColor.g = input.y / FRAME_BUFFER_HEIGHT;
+    cColor.rgb = distance(float2(0.5f, 0.5f), input.xy / float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT));
     
     return (cColor);
 }
