@@ -37,11 +37,17 @@ float4 PSMain(float4 input : SV_POSITION) : SV_TARGET
 {
     float4 cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
     
-    float2 f2NDC = float2(input.x / FRAME_BUFFER_WIDTH, input.y / FRAME_BUFFER_HEIGHT) - 0.5f; // (0, 1) : (-0.5, 0.5)
+    // 입력된 픽셀의 위치를 NDC(Normalized Device Coordinates)로 변환
+    float2 f2NDC = float2(input.x / FRAME_BUFFER_WIDTH, input.y / FRAME_BUFFER_HEIGHT) - 0.5f;
+    // 화면 비율 보정 (원이 찌그러지지 않도록)
     f2NDC.x *= (FRAME_BUFFER_WIDTH / FRAME_BUFFER_HEIGHT);
     
-    // 픽셀 위치를 0~1로 정규화한 후, 중앙을 원점으로 하는 좌표계로 변환
-    cColor.b = (length(f2NDC) <= 0.25f) ? 1.0f : 0.0f; 
+    float fLength = length(f2NDC);   // 중심 거리
+    float fMin = 0.3f, fMax = 0.2f;
+    
+    // smoothstep : fMin보다 작으면 0, fMax보다 크면 1, 그 사이면 0과 1 사이의 값을 반환
+    // 부드럽게 경계를 나타내줌
+    cColor.rgb = smoothstep(fMin, fMax, fLength);
     
     return (cColor);
 }
