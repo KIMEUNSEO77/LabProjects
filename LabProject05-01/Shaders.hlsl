@@ -36,9 +36,13 @@ float4 VSMain(uint nVertexID : SV_VertexID) : SV_POSITION
 float4 PSMain(float4 input : SV_POSITION) : SV_TARGET
 {
     float4 cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    // 0.5, 0.5를 중심으로 화면의 각 픽셀까지의 거리를 계산하여, 그 거리에 따라 색상을 결정
-    // 화면의 중심에서 멀어질수록 색상이 더 밝아지도록 설정
-    cColor.rgb = distance(float2(0.5f, 0.5f), input.xy / float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT));
+    
+    float fDistance = distance(float2(0.5f, 0.5f), input.xy / float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT));
+    
+    // 픽셀 위치가 화면 중앙에서 0.25 거리 안쪽이면 파란색으로 칠함
+    // 파란 원이 그려짐
+    if (fDistance < 0.25f)
+        cColor.b = 1.0f;
     
     return (cColor);
 }
