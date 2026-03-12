@@ -28,9 +28,15 @@ float4 VSMain(uint nVertexID : SV_VertexID) : SV_POSITION
     return (output);
 }
 
+#define FRAME_BUFFER_WIDTH 640.0f
+#define FRAME_BUFFER_HEIGHT 480.0f
+
+
 // 픽셀 셰이더를 정의
 float4 PSMain(float4 input : SV_POSITION) : SV_TARGET
 {
-// 프리미티브의 모든 픽셀의 색상을 노란색으로 반환
-    return (float4(1.0f, 1.0f, 0.0f, 1.0f));
+    float4 cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    cColor.r = input.x / FRAME_BUFFER_WIDTH;
+    
+    return (cColor);
 }
