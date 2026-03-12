@@ -37,12 +37,11 @@ float4 PSMain(float4 input : SV_POSITION) : SV_TARGET
 {
     float4 cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
     
-    float fDistance = distance(float2(0.5f, 0.5f), input.xy / float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT));
+    float2 f2NDC = float2(input.x / FRAME_BUFFER_WIDTH, input.y / FRAME_BUFFER_HEIGHT) - 0.5f; // (0, 1) : (-0.5, 0.5)
+    f2NDC.x *= (FRAME_BUFFER_WIDTH / FRAME_BUFFER_HEIGHT);
     
-    // 픽셀 위치가 화면 중앙에서 0.25 거리 안쪽이면 파란색으로 칠함
-    // 파란 원이 그려짐
-    if (fDistance < 0.25f)
-        cColor.b = 1.0f;
+    // 픽셀 위치를 0~1로 정규화한 후, 중앙을 원점으로 하는 좌표계로 변환
+    cColor.b = (length(f2NDC) <= 0.25f) ? 1.0f : 0.0f; 
     
     return (cColor);
 }
