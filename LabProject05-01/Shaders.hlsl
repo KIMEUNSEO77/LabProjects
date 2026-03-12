@@ -48,26 +48,30 @@ inline bool IsEqual(float fA, float fB, float fEpsilon)
     return ((abs(fA - fB) <= fEpsilon));
 }
 
+float Rectangle(float2 f2NDC, float fLeft, float fRight, float fTop, float fBottom)
+{
+    float2 f2Shape = float2(step(fLeft, f2NDC.x), step(f2NDC.x, fRight));
+    f2Shape *= float2(step(fTop, f2NDC.y), step(f2NDC.y, fBottom));
+    
+    return (f2Shape.x * f2Shape.y);
+}
 
 // 픽셀 셰이더를 정의
 float4 PSMain(float4 input : SV_POSITION) : SV_TARGET
 {
     float4 cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
     
-    // x축 중앙 초록색 선
-    if ((int) input.x == (int) HALF_WIDTH)
-        cColor.g = 1.0f;
+    float2 f2NDC = float2(input.x / FRAME_BUFFER_WIDTH, input.y / FRAME_BUFFER_HEIGHT) - 0.5f; // (0, 1) : (-0.5, 0.5)
+    f2NDC.x *= (FRAME_BUFFER_WIDTH / FRAME_BUFFER_HEIGHT);
     
-    // y축 중앙 빨간색 선
-    if ((int) input.y == (int) HALF_HEIGHT)
-        cColor.r = 1.0f;
+    float2 f2Horizontal = float2(0.1f, +0.3f); //(Left, Right)
+    float2 f2Vertical = float2(-0.3f, +0.3f); //(Top, Bottom)
     
-    // 중심에서 반지름이 100인 원의 파란색 선
-    // 현재 픽셀과 중심점 사이의 거리가 100과 같으면, 파란색 선으로 표현
-    float fDistance = distance((int2) input.xy, float2(HALF_WIDTH, HALF_HEIGHT));
-    // 0.5f는 오차 범위로, 100과 99.5 ~ 100.5 사이의 거리를 가진 픽셀도 파란색 선으로 표현
-    if (IsEqual(fDistance, 100.0f, 0.5f))
-        cColor.b = 1.0f;
+    // x영역 0.1~0.3, y영역 -0.2~0.4인 사각형이 그려짐
+    cColor.b = Rectangle(f2NDC, +0.1f, +0.3f, -0.2f, +0.4f);
+    
+    // x영역 -0.3~-0.1, y영역 -0.1~-0.4인 사각형이 그려짐
+    cColor.b += Rectangle(f2NDC, -0.3f, -0.1f, -0.4f, -0.1f);
     
     return (cColor);
 }
