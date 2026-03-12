@@ -1,4 +1,4 @@
-﻿// LabProject05.cpp 
+﻿// LabProject05-01.cpp 
 //
 // 20260312
 // 쉐이더 활용해 여러 도형 그리기
