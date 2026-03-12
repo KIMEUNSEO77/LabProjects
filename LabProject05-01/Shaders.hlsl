@@ -56,6 +56,18 @@ float Rectangle(float2 f2NDC, float fLeft, float fRight, float fTop, float fBott
     return (f2Shape.x * f2Shape.y);
 }
 
+// 주어진 반지름(fRadius) 안의 정다각형(fSides) 그리기
+float RegularPolygon(float2 f2NDC, float fSides, float fRadius)
+{
+    float fAngle = atan(f2NDC.y / f2NDC.x);   // 현재 픽셀 각도 (중심 기준 어느 방향에 있는지)
+    float fSlices = (2.0f * 3.14159f) / fSides;   // 다각형 각도 간격
+    
+    // step(distance, radius) : distance가 radius보다 작으면 1.0f, 아니면 0.0f 반환
+    float fShape = step(cos(floor((fAngle / fSlices) + 0.5f) * fSlices - fAngle) * length(f2NDC), fRadius);
+    
+    return (fShape);
+}
+
 // 픽셀 셰이더를 정의
 float4 PSMain(float4 input : SV_POSITION) : SV_TARGET
 {
@@ -64,18 +76,8 @@ float4 PSMain(float4 input : SV_POSITION) : SV_TARGET
     float2 f2NDC = float2(input.x / FRAME_BUFFER_WIDTH, input.y / FRAME_BUFFER_HEIGHT) - 0.5f; // (0, 1) : (-0.5, 0.5)
     f2NDC.x *= (FRAME_BUFFER_WIDTH / FRAME_BUFFER_HEIGHT);
     
-    // 점들이 놓일 원의 반지름
-    float fRadius = 0.3f;
-    // 각도 간격 = 12도? 점 하나 찍고, 12도 회전하며 점을 찍는 것을 반복
-    float fRadian = radians(360.0f / 30.0f);
-    
-    for (float f = 0; f < 30.0f; f += 1.0f)
-    {
-        // 원 둘레에 12도 간격으로 점을 고르게 찍음
-        float fAngle = fRadian * f;
-        // 0.0025f는 점의 밝기, 점과 픽셀 사이의 거리가 가까울수록 밝기가 증가하도록 함
-        cColor.rgb += (0.0025f / length(f2NDC + float2(fRadius * cos(fAngle), fRadius * sin(fAngle))));
-    }
+    cColor.b = RegularPolygon(f2NDC - float2(-0.3f, -0.1f), 8.0f, 0.2f); //4, 6, 8, ...
+    cColor.r = RegularPolygon(f2NDC - float2(+0.3f, +0.2f), 4.0f, 0.15f);
     
     return (cColor);
 }
