@@ -31,23 +31,43 @@ float4 VSMain(uint nVertexID : SV_VertexID) : SV_POSITION
 #define FRAME_BUFFER_WIDTH 1280.0f
 #define FRAME_BUFFER_HEIGHT 720.0f
 
+#define HALF_WIDTH   (FRAME_BUFFER_WIDTH * 0.5f)
+#define HALF_HEIGHT  (FRAME_BUFFER_HEIGHT * 0.5f)
+#define EPSILON       1.0e-5f
+
+inline bool IsZero(float fValue)
+{
+    return ((abs(fValue) <=  EPSILON));
+}
+inline bool IsZero(float fValue, float fEpsilon)
+{
+    return ((abs(fValue) <= fEpsilon));
+}
+inline bool IsEqual(float fA, float fB, float fEpsilon)
+{
+    return ((abs(fA - fB) <= fEpsilon));
+}
+
 
 // 픽셀 셰이더를 정의
 float4 PSMain(float4 input : SV_POSITION) : SV_TARGET
 {
     float4 cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
     
-    // 입력된 픽셀의 위치를 NDC(Normalized Device Coordinates)로 변환
-    float2 f2NDC = float2(input.x / FRAME_BUFFER_WIDTH, input.y / FRAME_BUFFER_HEIGHT) - 0.5f;
-    // 화면 비율 보정 (원이 찌그러지지 않도록)
-    f2NDC.x *= (FRAME_BUFFER_WIDTH / FRAME_BUFFER_HEIGHT);
+    // x축 중앙 초록색 선
+    if ((int) input.x == (int) HALF_WIDTH)
+        cColor.g = 1.0f;
     
-    float fLength = length(f2NDC);   // 중심 거리
-    float fMin = 0.3f, fMax = 0.2f;
+    // y축 중앙 빨간색 선
+    if ((int) input.y == (int) HALF_HEIGHT)
+        cColor.r = 1.0f;
     
-    // smoothstep : fMin보다 작으면 0, fMax보다 크면 1, 그 사이면 0과 1 사이의 값을 반환
-    // 부드럽게 경계를 나타내줌
-    cColor.rgb = smoothstep(fMin, fMax, fLength);
+    // 중심에서 반지름이 100인 원의 파란색 선
+    // 현재 픽셀과 중심점 사이의 거리가 100과 같으면, 파란색 선으로 표현
+    float fDistance = distance((int2) input.xy, float2(HALF_WIDTH, HALF_HEIGHT));
+    // 0.5f는 오차 범위로, 100과 99.5 ~ 100.5 사이의 거리를 가진 픽셀도 파란색 선으로 표현
+    if (IsEqual(fDistance, 100.0f, 0.5f))
+        cColor.b = 1.0f;
     
     return (cColor);
 }
