@@ -9,17 +9,22 @@ float4 main( float4 pos : POSITION ) : SV_POSITION
 }
 
 // 정점 셰이더 정의
+// 렌더 타겟 사각형 전체를 삼각형 2개로 표현한다.
 float4 VSMain(uint nVertexID : SV_VertexID) : SV_POSITION
 {
-    float4 output;
-// 프리미티브(삼각형)를 구성하는 정점의 인덱스(SV_VertexID)에 따라 정점을 반환
-// 정점의 위치 좌표는 변환이 된 좌표(SV_POSITION). 즉, 투영좌표계의 좌표
+    float4 output = (float4) 0;
     if (nVertexID == 0)
-        output = float4(0.0, 0.5, 0.5, 1.0);
+        output = float4(-1.0f, +1.0f, 0.0f, 1.0f);
     else if (nVertexID == 1)
-        output = float4(0.5, -0.5, 0.5, 1.0);
+        output = float4(+1.0f, +1.0f, 0.0f, 1.0f);
     else if (nVertexID == 2)
-        output = float4(-0.5, -0.5, 0.5, 1.0);
+        output = float4(+1.0f, -1.0f, 0.0f, 1.0f);
+    else if (nVertexID == 3)
+        output = float4(-1.0f, +1.0f, 0.0f, 1.0f);
+    else if (nVertexID == 4)
+        output = float4(+1.0f, -1.0f, 0.0f, 1.0f);
+    else if (nVertexID == 5)
+        output = float4(-1.0f, -1.0f, 0.0f, 1.0f);
     return (output);
 }
 
