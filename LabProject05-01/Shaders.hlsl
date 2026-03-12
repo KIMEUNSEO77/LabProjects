@@ -73,13 +73,18 @@ float4 PSMain(float4 input : SV_POSITION) : SV_TARGET
 {
     float4 cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
     
-    // 화면을 10개의 반복 구간으로 나눔
-    // frac(x) : x의 소수 부분을 반환하는 함수
-    float x = abs(frac((input.x * 10.0f) / FRAME_BUFFER_HEIGHT) - 0.5f);
-    float y = abs(frac((input.y * 10.0f) / FRAME_BUFFER_HEIGHT) - 0.5f);
+    // 픽셀 좌표를 NDC로 변환 (정규화)
+    float2 f2NDC = input.xy / float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT) - 0.5f;
     
-    // x 또는 y가 0.0125f 이하인 경우 빨간색, 그렇지 않으면 검은색
-    cColor.r = ((x <= 0.0125f) || (y <= 0.0125f)) ? 1.0f : 0.0f;
+    // NDC 좌표를 화면 비율에 맞게 조정 (원이 찌그러지지 않게)
+    f2NDC.x *= (FRAME_BUFFER_WIDTH / FRAME_BUFFER_HEIGHT);
+    // 좌표 10배 확대 (더 많은 패턴이 보이도록)
+    f2NDC.xy *= 10.0f;
+    
+    // length(f2NDC) : 중심에서 현재 픽셀까지의 거리
+    // cos(length(f2NDC) * 3.14159f) : 중심에서 멀어질수록 주기적으로 색상이 변화 (원형 패턴)
+    // smoothstep(0.125f, 0.875f, value) : value가 0.125f보다 작으면 0.0f, 0.875f보다 크면 1.0f, 그 사이면 부드럽게 변화
+    cColor.b = smoothstep(0.125f, 0.875f, abs(cos(length(f2NDC) * 3.14159f)));
     
     return (cColor);
 }
