@@ -61,11 +61,21 @@ float4 PSMain(float4 input : SV_POSITION) : SV_TARGET
 {
     float4 cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
     
-    float2 f2NDC = float2(input.x - FRAME_BUFFER_WIDTH * 0.5f, input.y - FRAME_BUFFER_HEIGHT * 0.5f);
-    f2NDC *= 20.0f;    // 좌표를 20배 확대하여 색 변화를 극대화
+    float2 f2NDC = float2(input.x / FRAME_BUFFER_WIDTH, input.y / FRAME_BUFFER_HEIGHT) - 0.5f; // (0, 1) : (-0.5, 0.5)
+    f2NDC.x *= (FRAME_BUFFER_WIDTH / FRAME_BUFFER_HEIGHT);
     
-    float fLength = length(f2NDC);  // 중심에서 거리 계산
-    cColor.rgb = cos(fLength); // 원점에서 멀어질수록 색이 변화하도록 함
+    // 점들이 놓일 원의 반지름
+    float fRadius = 0.3f;
+    // 각도 간격 = 12도? 점 하나 찍고, 12도 회전하며 점을 찍는 것을 반복
+    float fRadian = radians(360.0f / 30.0f);
+    
+    for (float f = 0; f < 30.0f; f += 1.0f)
+    {
+        // 원 둘레에 12도 간격으로 점을 고르게 찍음
+        float fAngle = fRadian * f;
+        // 0.0025f는 점의 밝기, 점과 픽셀 사이의 거리가 가까울수록 밝기가 증가하도록 함
+        cColor.rgb += (0.0025f / length(f2NDC + float2(fRadius * cos(fAngle), fRadius * sin(fAngle))));
+    }
     
     return (cColor);
 }
