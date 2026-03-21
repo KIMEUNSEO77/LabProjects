@@ -10,13 +10,10 @@ public:
 	CScene();
 	~CScene();
 
-	//씬에서 마우스와 키보드 메시지를 처리한다.
-	bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM
-		lParam);
-	bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM
-		lParam);
-	void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
-		* pd3dCommandList);
+	// 씬에서 마우스와 키보드 메시지를 처리
+	bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
+	bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
+	void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList);
 	void ReleaseObjects();
 	bool ProcessInput(UCHAR* pKeysBuffer);
 	void AnimateObjects(float fTimeElapsed);
@@ -24,12 +21,12 @@ public:
 
 	void ReleaseUploadBuffers();
 
-	//그래픽 루트 시그너쳐를 생성한다.
+	// 그래픽 루트 시그너쳐를 생성
 	ID3D12RootSignature* CreateGraphicsRootSignature(ID3D12Device* pd3dDevice);
 	ID3D12RootSignature* GetGraphicsRootSignature();
 
 protected:
-	//씬은 셰이더들의 집합이다. 셰이더들은 게임 객체들의 집합이다.
+	// 씬은 셰이더들의 집합. 셰이더들은 게임 객체들의 집합.
 	CShader** m_ppShaders = NULL;
 	int m_nShaders = 0;
 
