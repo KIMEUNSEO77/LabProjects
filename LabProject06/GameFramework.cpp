@@ -356,20 +356,24 @@ void CGameFramework::CreateDepthStencilView()
 		d3dDsvCPUDescriptorHandle);
 }
 
+// 씬만 생성했었는데, 이제 GPU 리소스도 생성, 커맨드 리스트를 실제로 사용하게 됨.
 void CGameFramework::BuildObjects()
 {
-
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
-	//씬 객체를 생성하고 씬에 포함될 게임 객체들을 생성한다.
+
+	// 씬 객체를 생성하고 씬에 포함될 게임 객체들을 생성(GPU 초기화도 포함)
 	m_pScene = new CScene();
 	m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
-	//씬 객체를 생성하기 위하여 필요한 그래픽 명령 리스트들을 명령 큐에 추가한다.
+
+	// 씬 객체를 생성하기 위하여 필요한 그래픽 명령 리스트들을 명령 큐에 추가
 	m_pd3dCommandList->Close();
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
-	//그래픽 명령 리스트들이 모두 실행될 때까지 기다린다.
+
+	// 그래픽 명령 리스트들이 모두 실행될 때까지 기다림
 	WaitForGpuComplete();
-	//그래픽 리소스들을 생성하는 과정에 생성된 업로드 버퍼들을 소멸시킨다.
+
+	// 그래픽 리소스들을 생성하는 과정에 생성된 업로드 버퍼들을 소멸
 	if (m_pScene) m_pScene->ReleaseUploadBuffers();
 	m_GameTimer.Reset();
 }
@@ -466,21 +470,6 @@ void CGameFramework::AnimateObjects()
 
 void CGameFramework::WaitForGpuComplete()
 {
-	//m_nFenceValue++;
-	/*
-	// CPU 펜스 값 증가
-	const UINT64 nFence = m_nFenceValue;
-	HRESULT hResult = m_pd3dCommandQueue->Signal(m_pd3dFence, nFence);
-
-	// GPU가 펜스의 값을 설정하는 명령을 명령 큐에 추가
-	if (m_pd3dFence->GetCompletedValue() < nFence)
-	{
-		// 펜스의 현재 값이 설정한 값보다 작으면 펜스의 현재 값이 설정한 값이 될 때까지 기다림
-		hResult = m_pd3dFence->SetEventOnCompletion(nFence, m_hFenceEvent);
-		::WaitForSingleObject(m_hFenceEvent, INFINITE);
-	}
-	*/
-
 	// GPU 동기화 방식이 단일 Fence에서 여러 Fence로 변경됨에 따라, 
 	// 현재 프레임에서 사용할 Fence 값을 증가시키고, 해당 Fence 값이 GPU에서 완료될 때까지 기다리는 방식으로 변경
 	UINT64 nFenceValue = ++m_nFenceValues[m_nSwapChainBufferIndex];
@@ -566,20 +555,6 @@ void CGameFramework::FrameAdvance()
 
 	// GPU가 모든 명령 리스트를 실행할 때 까지 기다림
 	WaitForGpuComplete();
-
-	// 스왑체인을 프리젠트 
-	// 현재 렌더 타겟(후면버퍼)의 내용이 전면버퍼로 옮겨지고 렌더 타겟 인덱스가 바뀜
-	/*
-	DXGI_PRESENT_PARAMETERS dxgiPresentParameters;
-	dxgiPresentParameters.DirtyRectsCount = 0;
-	dxgiPresentParameters.pDirtyRects = NULL;
-	dxgiPresentParameters.pScrollRect = NULL;
-	dxgiPresentParameters.pScrollOffset = NULL;
-	//
-	m_pdxgiSwapChain->Present1(1, 0, &dxgiPresentParameters);
-
-	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
-	*/
 
 	// 프리젠트 호출을 간단히 함.
 	// Present1은 변환 일부 내용만 갱신하는 등의 고급기능을 제공 
