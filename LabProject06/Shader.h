@@ -3,7 +3,7 @@
 
 #include "GameObject.h"
 
-//셰이더 소스 코드를 컴파일하고 그래픽스 상태 객체를 생성
+// 셰이더 소스 코드를 컴파일하고 그래픽스 상태 객체를 생성
 class CShader
 {
 public:
@@ -25,8 +25,7 @@ public:
 	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature
 		* pd3dRootSignature);
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
-		* pd3dCommandList) {
-	}
+		* pd3dCommandList) { }
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList) {}
 	virtual void ReleaseShaderVariables() {}
 	virtual void ReleaseUploadBuffers();
