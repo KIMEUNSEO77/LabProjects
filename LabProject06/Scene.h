@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Timer.h"
+#include "Shader.h"
 
 class CScene
 {

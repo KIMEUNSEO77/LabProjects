@@ -2,11 +2,13 @@
 
 // 버퍼 리소스를 생성하는 함수
 // 버퍼의 힙 유형에 따라 버퍼 리소스를 생성하고 초기화 데이터가 있으면 초기화
+// CPU는 Upload 버퍼에 쉽게 써넣고, GPU는 Default 버퍼에서 빠르게 읽을 수 있도록 함
 ID3D12Resource* CreateBufferResource(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	* pd3dCommandList, void* pData, UINT nBytes, D3D12_HEAP_TYPE d3dHeapType,
 	D3D12_RESOURCE_STATES d3dResourceStates, ID3D12Resource** ppd3dUploadBuffer)
 {
 	ID3D12Resource* pd3dBuffer = NULL;
+
 	D3D12_HEAP_PROPERTIES d3dHeapPropertiesDesc;
 	::ZeroMemory(&d3dHeapPropertiesDesc, sizeof(D3D12_HEAP_PROPERTIES));
 	d3dHeapPropertiesDesc.Type = d3dHeapType;
@@ -14,6 +16,7 @@ ID3D12Resource* CreateBufferResource(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	d3dHeapPropertiesDesc.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 	d3dHeapPropertiesDesc.CreationNodeMask = 1;
 	d3dHeapPropertiesDesc.VisibleNodeMask = 1;
+
 	D3D12_RESOURCE_DESC d3dResourceDesc;
 	::ZeroMemory(&d3dResourceDesc, sizeof(D3D12_RESOURCE_DESC));
 	d3dResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
@@ -27,6 +30,7 @@ ID3D12Resource* CreateBufferResource(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	d3dResourceDesc.SampleDesc.Quality = 0;
 	d3dResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 	d3dResourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
 	D3D12_RESOURCE_STATES d3dResourceInitialStates = D3D12_RESOURCE_STATE_COPY_DEST;
 	if (d3dHeapType == D3D12_HEAP_TYPE_UPLOAD) d3dResourceInitialStates =
 		D3D12_RESOURCE_STATE_GENERIC_READ;
@@ -40,22 +44,25 @@ ID3D12Resource* CreateBufferResource(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	{
 		switch (d3dHeapType)
 		{
+			// GPU가 주로 쓰는 메모리, 접근 속도가 빠름, CPU가 직접 접근 불가능
 		case D3D12_HEAP_TYPE_DEFAULT:
 		{
 			if (ppd3dUploadBuffer)
 			{
-				//업로드 버퍼를 생성한다.
+				// 업로드 버퍼를 생성
 				d3dHeapPropertiesDesc.Type = D3D12_HEAP_TYPE_UPLOAD;
 				pd3dDevice->CreateCommittedResource(&d3dHeapPropertiesDesc,
 					D3D12_HEAP_FLAG_NONE, &d3dResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, NULL,
 					__uuidof(ID3D12Resource), (void**)ppd3dUploadBuffer);
-				//업로드 버퍼를 매핑하여 초기화 데이터를 업로드 버퍼에 복사한다.
+
+				// 업로드 버퍼를 매핑하여 초기화 데이터를 업로드 버퍼에 복사
 				D3D12_RANGE d3dReadRange = { 0, 0 };
 				UINT8* pBufferDataBegin = NULL;
 				(*ppd3dUploadBuffer)->Map(0, &d3dReadRange, (void**)&pBufferDataBegin);
 				memcpy(pBufferDataBegin, pData, nBytes);
 				(*ppd3dUploadBuffer)->Unmap(0, NULL);
-				//업로드 버퍼의 내용을 디폴트 버퍼에 복사한다.
+
+				// 업로드 버퍼의 내용을 디폴트 버퍼에 복사
 				pd3dCommandList->CopyResource(pd3dBuffer, *ppd3dUploadBuffer);
 				D3D12_RESOURCE_BARRIER d3dResourceBarrier;
 				::ZeroMemory(&d3dResourceBarrier, sizeof(D3D12_RESOURCE_BARRIER));
@@ -70,6 +77,7 @@ ID3D12Resource* CreateBufferResource(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 			}
 			break;
 		}
+		// CPU가 주로 쓰는 메모리, 주로 임시 업로드용으로 쓰임
 		case D3D12_HEAP_TYPE_UPLOAD:
 		{
 			D3D12_RANGE d3dReadRange = { 0, 0 };

@@ -1,4 +1,5 @@
 // GameObject.cpp
+#include "stdafx.h"
 #include "GameObject.h"
 #include "Shader.h"
 

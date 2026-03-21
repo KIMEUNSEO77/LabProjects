@@ -21,8 +21,8 @@ float4 main( float4 pos : POSITION ) : SV_POSITION
 	return pos;
 }
 
-// 정점 셰이더 정의
-float4 VSMain(uint nVertexID : SV_VertexID) : SV_POSITION
+//정점 셰이더를 정의한다.
+VS_OUTPUT VSMain(VS_INPUT input)
 {
     VS_OUTPUT output;
 //정점의 위치 벡터는 투영좌표계로 표현되어 있으므로 변환하지 않고 그대로 출력한다. 
@@ -31,9 +31,8 @@ float4 VSMain(uint nVertexID : SV_VertexID) : SV_POSITION
     output.color = input.color;
     return (output);
 }
-
-// 픽셀 셰이더를 정의
-float4 PSMain(float4 input : SV_POSITION) : SV_TARGET
+//픽셀 셰이더를 정의한다.
+float4 PSMain(VS_OUTPUT input) : SV_TARGET
 {
 //입력되는 픽셀의 색상을 그대로 출력-병합 단계(렌더 타겟)로 출력한다. 
     return (input.color);

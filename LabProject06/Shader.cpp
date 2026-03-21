@@ -1,5 +1,11 @@
 // Shader.cpp
+#include "stdafx.h"
 #include "Shader.h"
+
+CShader::CShader()
+{
+
+}
 
 CShader::~CShader()
 {
@@ -101,7 +107,7 @@ D3D12_SHADER_BYTECODE CShader::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
 	return(CompileShaderFromFile(L"Shaders.hlsl", "PSMain", "ps_5_1", ppd3dShaderBlob));
 }
 //셰이더 소스 코드를 컴파일하여 바이트 코드 구조체를 반환한다. 
-D3D12_SHADER_BYTECODE CShader::CompileShaderFromFile(WCHAR* pszFileName, LPCSTR
+D3D12_SHADER_BYTECODE CShader::CompileShaderFromFile(const WCHAR* pszFileName, LPCSTR
 	pszShaderName, LPCSTR pszShaderProfile, ID3DBlob** ppd3dShaderBlob)
 {
 	UINT nCompileFlags = 0;

@@ -1,4 +1,5 @@
 // Scene.cpp
+#include "stdafx.h"
 #include "Scene.h"
 
 CScene::CScene()
@@ -10,6 +11,7 @@ CScene::~CScene()
 }
 
 // 루트 시그너쳐(CPU -> GPU 자원 연결 규칙)를 생성
+/*
 void CScene::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
 {
 	// 아무 리소스도 없는 가장 기본적인 루트 시그너쳐를 생성
@@ -37,7 +39,9 @@ void CScene::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
 	if (pd3dSignatureBlob) pd3dSignatureBlob->Release();
 	if (pd3dErrorBlob) pd3dErrorBlob->Release();
 }
+*/
 
+/*
 // 그래픽 파이프라인 상태 객체를 생성 (GPU 렌더링 파이프라인의 전체 설정을 담고 있음)
 // ex) 어떤 셰이더를 사용할지, 래스터라이저 상태, 블렌드 상태 등 렌더링 설정을 GPU에게 전달
 void CScene::CreateGraphicsPipelineState(ID3D12Device* pd3dDevice)
@@ -118,6 +122,7 @@ void CScene::CreateGraphicsPipelineState(ID3D12Device* pd3dDevice)
 	if (pd3dVertexShaderBlob) pd3dVertexShaderBlob->Release();
 	if (pd3dPixelShaderBlob) pd3dPixelShaderBlob->Release();
 }
+*/
 
 // 렌더링 준비에 필요한 객체들을 생성 (루트 시그너쳐, 그래픽 파이프라인 상태 객체 등)
 void CScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
@@ -162,7 +167,7 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 	return(false);
 }
 
-bool CScene::ProcessInput()
+bool CScene::ProcessInput(UCHAR* pKeysBuffer)
 {
 	return(false);
 }
@@ -173,18 +178,6 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	{
 		m_ppShaders[i]->AnimateObjects(fTimeElapsed);
 	}
-}
-
-// 렌더링을 하기 위해 GPU에 렌더링 설정을 전달하는 함수
-// 그 프레임에서 그릴 준비를 함.
-void CScene::PrepareRender(ID3D12GraphicsCommandList* pd3dCommandList)
-{
-	// 그래픽 루트 시그너쳐를 설정
-	pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
-	// 파이프라인 상태를 설정
-	pd3dCommandList->SetPipelineState(m_pd3dPipelineState);
-	// 프리미티브 토폴로지(삼각형 리스트)를 설정 (어떤 방식으로 정점들을 연결하여 도형을 그릴지 설정)
-	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void CScene::Render(ID3D12GraphicsCommandList* pd3dCommandList)

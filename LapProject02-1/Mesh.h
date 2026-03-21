@@ -52,7 +52,8 @@ class CPoint3D
 {
 public:
 	CPoint3D() {}
-	CPoint3D(float x, float y, float z) {this->x = x;
+	CPoint3D(float x, float y, float z) {
+		this->x = x;
 		this->y = y;
 		this->z = z;
 	}
