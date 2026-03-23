@@ -25,5 +25,24 @@ public:
 	virtual void Animate(float fTimeElapsed);  // 시간에 따라 움직임 (이동, 회전, 신축 등)
 	virtual void OnPrepareRender();            // 렌더 전 상태 준비
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList); // 실제 그릴지
+
+	void Rotate(XMFLOAT3* pxmf3Axis, float fAngle); // 오브젝트를 회전시키는 함수
+};
+
+class CRotatingObject : public CGameObject
+{
+public:
+	CRotatingObject();
+	virtual ~CRotatingObject();
+private:
+	XMFLOAT3 m_xmf3RotationAxis;
+	float m_fRotationSpeed;
+public:
+	void SetRotationSpeed(float fRotationSpeed) { m_fRotationSpeed = fRotationSpeed; }
+	void SetRotationAxis(XMFLOAT3 xmf3RotationAxis) {
+		m_xmf3RotationAxis =
+			xmf3RotationAxis;
+	}
+	virtual void Animate(float fTimeElapsed);
 };
 
