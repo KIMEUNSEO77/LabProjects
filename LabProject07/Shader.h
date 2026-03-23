@@ -36,7 +36,7 @@ public:
 		LPCSTR pszShaderProfile, ID3DBlob** ppd3dShaderBlob);
 
 	// 셰이더를 이용해 PSO를 만드는 함수(모든 정보를 다 모아서 파이프라인 상태객체를 만듦)
-	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature * pd3dRootSignature);
+	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature * pd3dGraphicsRootSignature);
 
 
 	// 셰이더에 넘겨줄 데이터 관리를 위한 함수들(월드 행렬, 뷰 행렬, 투영 행렬 등)
@@ -49,11 +49,24 @@ public:
 
 	// 셰이더가 포함하는 게임 객체들을 렌더링하는 함수들
 	virtual void OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList);
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
 protected:
 	// 파이프라인 상태 객체들의 리스트(배열)
 	// 셰이더와 각종 렌더 상태들을 묶어논 PSO 목록
 	ID3D12PipelineState** m_ppd3dPipelineStates = NULL;
 	int m_nPipelineStates = 0;
+};
+
+
+class CDiffusedShader : public CShader
+{
+public:
+	CDiffusedShader();
+	virtual ~CDiffusedShader();
+	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
+	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob** ppd3dShaderBlob);
+	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
+	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature
+		* pd3dGraphicsRootSignature);
 };
 
