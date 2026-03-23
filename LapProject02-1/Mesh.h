@@ -14,7 +14,7 @@ public:
 private:
 	// 인스턴싱을 위해 메쉬는 게임 객체들에게 공유될 수 있음
 	// 다음 참조 값은 메쉬가 공유되는 게임 객체들의 개수를 나타냄
-	int m_nReferences = 0;
+	int m_nReferences = 1;
 
 public:
 	// 메쉬가 게임 객체에 공유될 때마다 참조 값을 1씩 증가 시킴
@@ -22,8 +22,7 @@ public:
 	// 메쉬를 공유하는 게임 객체가 소멸될 때마다 참조값을 1씩 감소 시킴
 	// 참조값이 0이 되면 메쉬를 소멸시킴
 	void Release() {
-		m_nReferences--; if (m_nReferences <= 0) delete
-			this;
+		m_nReferences--; if (m_nReferences <= 0) delete this;
 	}
 	
 private:
