@@ -3,6 +3,7 @@
 
 #include "Timer.h"
 #include "Scene.h"
+#include "Camera.h"
 
 // 게임 프로그램 뼈대
 // Direct3D 디바이스를 생성, 사용자 입력 처리, 애니메이션 등 화면 출력을 위한 여러 가지 처리 
@@ -53,8 +54,8 @@ private:
 	UINT64 m_nFenceValues[m_nSwapChainBuffers]; // 펜스 값 (후면 버퍼마다 현재 펜스 값을 관리하기 위해 수정
 	HANDLE m_hFenceEvent; // 펜스 이벤트 핸들
 
-	D3D12_VIEWPORT m_d3dViewport; // 뷰포트 구조체
-	D3D12_RECT m_d3dScissorRect; // 가위 사각형 구조체
+	//D3D12_VIEWPORT m_d3dViewport; // 뷰포트 구조체
+	//D3D12_RECT m_d3dScissorRect; // 가위 사각형 구조체
 
 	// 게임 프레임워크에서 사용할 타이머
 	CGameTimer m_GameTimer;
@@ -62,7 +63,8 @@ private:
 	_TCHAR m_pszFrameRate[50];
 
 	CScene* m_pScene; // 게임 씬 포인터 (게임의 모든 오브젝트와 로직을 관리하는 클래스)
-
+public:
+	CCamera* m_pCamera = NULL;
 public:
 	CGameFramework();
 	~CGameFramework();
