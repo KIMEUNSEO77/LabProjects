@@ -13,8 +13,10 @@ public:
 	// 씬에서 마우스와 키보드 메시지를 처리
 	bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
+
 	void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList);
 	void ReleaseObjects();
+
 	bool ProcessInput(UCHAR* pKeysBuffer);
 	void AnimateObjects(float fTimeElapsed);
 	void Render(ID3D12GraphicsCommandList* pd3dCommandList);
@@ -27,8 +29,14 @@ public:
 
 protected:
 	// 씬은 셰이더들의 집합. 셰이더들은 게임 객체들의 집합.
+	/*
 	CShader** m_ppShaders = NULL;
 	int m_nShaders = 0;
+	*/
+
+	//씬은 게임 객체들의 집합이다. 게임 객체는 셰이더를 포함한다.
+	CGameObject** m_ppObjects = NULL;
+	int m_nObjects = 0;
 
 
 	// 렌더링 파이프라인의 "설정 정보"를 GPU에게 전달하는 중요한 객체들
@@ -39,6 +47,6 @@ protected:
 
 	// 파이프라인 상태를 나타내는 인터페이스 포인터
 	// GPU 렌더링 파이프라인의 전체 설정을 담고 있음. (어떻게 그릴지?)
-	ID3D12PipelineState* m_pd3dPipelineState = NULL;
+	//ID3D12PipelineState* m_pd3dPipelineState = NULL;
 };
 
