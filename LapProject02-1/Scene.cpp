@@ -10,9 +10,9 @@ void CScene::BuildObjects()
 	CCubeMesh* pCubeMesh = new CCubeMesh(4.0f, 4.0f, 4.0f);
 
 	// 게임 객체 2 개를 생성
-	m_nObjects = 2;
+	m_nObjects = 3;
 
-	m_ppObjects = new CGameObject * [m_nObjects];
+	m_ppObjects = new CGameObject * [m_nObjects]; // CGameObject 포인터를 m_nObjects 개 만큼 담을 수 있는 배열을 힙에 만듦
 	m_ppObjects[0] = new CGameObject();
 	m_ppObjects[0]->SetMesh(pCubeMesh);
 	m_ppObjects[0]->SetPosition(-8.5f, 0.0f, -14.0f);
@@ -26,6 +26,13 @@ void CScene::BuildObjects()
 	m_ppObjects[1]->SetRotation(0.0f, 0.0f, 0.0f);
 	m_ppObjects[1]->SetRotationSpeed(30.0f, 9.0f, 5.0f);
 	m_ppObjects[1]->SetColor(RGB(0, 0, 255));
+
+	m_ppObjects[2] = new CGameObject();
+	m_ppObjects[2]->SetMesh(pCubeMesh);
+	m_ppObjects[2]->SetPosition(0.5f, 0.0f, -14.0f);
+	m_ppObjects[2]->SetRotation(0.0f, 0.0f, 0.0f);
+	m_ppObjects[2]->SetRotationSpeed(30.0f, 9.0f, 5.0f);
+	m_ppObjects[2]->SetColor(RGB(0, 255, 0));
 }
 
 void CScene::ReleaseObjects()
@@ -37,8 +44,10 @@ void CScene::ReleaseObjects()
 
 void CScene::Animate(float fElapsedTime)
 {
+	/*
 	for (int i = 0; i < m_nObjects; i++)
 		m_ppObjects[i]->Animate(fElapsedTime);
+		*/
 }
 
 void CScene::Render(HDC hDCFrameBuffer, CCamera* pCamera)

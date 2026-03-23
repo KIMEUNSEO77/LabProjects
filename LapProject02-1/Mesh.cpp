@@ -41,15 +41,14 @@ CMesh::~CMesh()
 
 void CMesh::SetPolygon(int nIndex, CPolygon* pPolygon)
 {
-	//메쉬의 다각형을 설정 
+	// 메쉬의 다각형을 설정 
 	if ((0 <= nIndex) && (nIndex < m_nPolygons)) 
 		m_ppPolygons[nIndex] = pPolygon;
 }
 
-void Draw2DLine(HDC hDCFrameBuffer, CPoint3D& f3PreviousProject,
-	CPoint3D& f3CurrentProject)
+void Draw2DLine(HDC hDCFrameBuffer, CPoint3D& f3PreviousProject, CPoint3D& f3CurrentProject)
 {
-	//투영 좌표계의 2점을 화면 좌표계로 변환하고 변환된 두 점(픽셀)을 선분으로 그린다.  
+	// 투영 좌표계의 두 점을 화면 좌표계로 변환하고 변환된 두 점(픽셀)을 선분으로 그림  
 	CPoint3D f3Previous = CGraphicsPipeline::ScreenTransform(f3PreviousProject);
 	CPoint3D f3Current = CGraphicsPipeline::ScreenTransform(f3CurrentProject);
 	::MoveToEx(hDCFrameBuffer, (long)f3Previous.x, (long)f3Previous.y, NULL);

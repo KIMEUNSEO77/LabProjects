@@ -96,12 +96,12 @@ void CGameFramework::ProcessInput()
 	if (::GetKeyboardState(pKeyBuffer))
 	{
 		float cxKeyDelta = 0.0f, cyKeyDelta = 0.0f, czKeyDelta = 0.0f;
-		if (pKeyBuffer[VK_UP] & 0xF0) czKeyDelta = +0.125f;
-		if (pKeyBuffer[VK_DOWN] & 0xF0) czKeyDelta = -0.125f;
-		if (pKeyBuffer[VK_LEFT] & 0xF0) cxKeyDelta = -0.125f;
-		if (pKeyBuffer[VK_RIGHT] & 0xF0) cxKeyDelta = +0.125f;
-		if (pKeyBuffer[VK_PRIOR] & 0xF0) cyKeyDelta = +0.125f;
-		if (pKeyBuffer[VK_NEXT] & 0xF0) cyKeyDelta = -0.125f;
+		if (pKeyBuffer[VK_UP] & 0xF0) czKeyDelta = +0.0125f;
+		if (pKeyBuffer[VK_DOWN] & 0xF0) czKeyDelta = -0.0125f;
+		if (pKeyBuffer[VK_LEFT] & 0xF0) cxKeyDelta = +0.0125f;
+		if (pKeyBuffer[VK_RIGHT] & 0xF0) cxKeyDelta = -0.0125f;
+		if (pKeyBuffer[VK_PRIOR] & 0xF0) cyKeyDelta = +0.0125f;
+		if (pKeyBuffer[VK_NEXT] & 0xF0) cyKeyDelta = -0.0125f;
 		m_pPlayer->Move(cxKeyDelta, cyKeyDelta, czKeyDelta);
 	}
 }

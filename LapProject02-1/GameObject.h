@@ -56,7 +56,7 @@ public:
 	void Move(float x, float y, float z) {
 		m_fxPosition += x;
 		m_fyPosition += y; 
-		m_fyPosition += z;
+		m_fzPosition += z;
 	}
 	//게임 객체를 x-축, y-축, z-축을 기준으로 회전
 	void Rotate(float x, float y, float z) {
