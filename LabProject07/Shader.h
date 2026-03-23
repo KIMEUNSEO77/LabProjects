@@ -38,26 +38,19 @@ public:
 	// 셰이더를 이용해 PSO를 만드는 함수(모든 정보를 다 모아서 파이프라인 상태객체를 만듦)
 	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature * pd3dRootSignature);
 
+
 	// 셰이더에 넘겨줄 데이터 관리를 위한 함수들(월드 행렬, 뷰 행렬, 투영 행렬 등)
-	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList) { }
-	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList) {}
-	virtual void ReleaseShaderVariables() {}
+	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void ReleaseShaderVariables();
 
-	virtual void ReleaseUploadBuffers();
-
-	// 셰이더가 포함하는 게임 오브젝트들을 관리하는 함수들
-	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList * pd3dCommandList, void* pContext = NULL);
-	virtual void AnimateObjects(float fTimeElapsed);
-	virtual void ReleaseObjects();
+	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList,
+		XMFLOAT4X4* pxmf4x4World);
 
 	// 셰이더가 포함하는 게임 객체들을 렌더링하는 함수들
 	virtual void OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList);
 protected:
-	// 셰이더가 그릴 게임 객체들의 리스트(배열)
-	CGameObject** m_ppObjects = NULL;
-	int m_nObjects = 0;
-
 	// 파이프라인 상태 객체들의 리스트(배열)
 	// 셰이더와 각종 렌더 상태들을 묶어논 PSO 목록
 	ID3D12PipelineState** m_ppd3dPipelineStates = NULL;
