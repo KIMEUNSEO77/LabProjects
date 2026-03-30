@@ -93,15 +93,18 @@ void CGameFramework::ReleaseObjects()
 void CGameFramework::ProcessInput()
 {
 	static UCHAR pKeyBuffer[256];
+
 	if (::GetKeyboardState(pKeyBuffer))
 	{
 		float cxKeyDelta = 0.0f, cyKeyDelta = 0.0f, czKeyDelta = 0.0f;
+
 		if (pKeyBuffer[VK_UP] & 0xF0) czKeyDelta = +0.0125f;
 		if (pKeyBuffer[VK_DOWN] & 0xF0) czKeyDelta = -0.0125f;
 		if (pKeyBuffer[VK_LEFT] & 0xF0) cxKeyDelta = +0.0125f;
 		if (pKeyBuffer[VK_RIGHT] & 0xF0) cxKeyDelta = -0.0125f;
 		if (pKeyBuffer[VK_PRIOR] & 0xF0) cyKeyDelta = +0.0125f;
 		if (pKeyBuffer[VK_NEXT] & 0xF0) cyKeyDelta = -0.0125f;
+
 		m_pPlayer->Move(cxKeyDelta, cyKeyDelta, czKeyDelta);
 	}
 }
@@ -109,7 +112,8 @@ void CGameFramework::ProcessInput()
 // 씬의 게임 객체들을 애니메이션
 void CGameFramework::AnimateObjects()
 {
-	if (m_pScene) m_pScene->Animate(1.0f / 60.0f);
+	// if (m_pScene) m_pScene->Animate(1.0f / 60.0f);
+	if (m_pScene) m_pScene->Animate(1.0f / 600.0f);
 }
 
 // 윈도우 메시지 루프에서 반복적으로 호출됨 (응용 프로그램 실행 중 이 함수는 반복적으로 실행됨)

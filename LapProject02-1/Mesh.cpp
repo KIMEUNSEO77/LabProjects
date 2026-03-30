@@ -51,6 +51,7 @@ void Draw2DLine(HDC hDCFrameBuffer, CPoint3D& f3PreviousProject, CPoint3D& f3Cur
 	// 투영 좌표계의 두 점을 화면 좌표계로 변환하고 변환된 두 점(픽셀)을 선분으로 그림  
 	CPoint3D f3Previous = CGraphicsPipeline::ScreenTransform(f3PreviousProject);
 	CPoint3D f3Current = CGraphicsPipeline::ScreenTransform(f3CurrentProject);
+
 	::MoveToEx(hDCFrameBuffer, (long)f3Previous.x, (long)f3Previous.y, NULL);
 	::LineTo(hDCFrameBuffer, (long)f3Current.x, (long)f3Current.y);
 }
@@ -58,6 +59,7 @@ void Draw2DLine(HDC hDCFrameBuffer, CPoint3D& f3PreviousProject, CPoint3D& f3Cur
 void CMesh::Render(HDC hDCFrameBuffer)
 {
 	CPoint3D f3InitialProject, f3PreviousProject, f3Intersect;
+
 	bool bPreviousInside = false, bInitialInside = false,
 		bCurrentInside = false, bIntersectInside = false;
 
@@ -66,21 +68,27 @@ void CMesh::Render(HDC hDCFrameBuffer)
 	{
 		int nVertices = m_ppPolygons[j]->m_nVertices;
 		CVertex* pVertices = m_ppPolygons[j]->m_pVertices;
+
 		// 다각형의 첫 번째 정점을 원근 투영 변환
 		f3PreviousProject = f3InitialProject = CGraphicsPipeline::Project(pVertices[0].m_f3Position);
+
 		// 변환된 점이 투영 사각형에 포함되는 가를 계산
 		bPreviousInside = bInitialInside = (-1.0f <=f3InitialProject.x) && (f3InitialProject.x <= 1.0f) 
 			&& (-1.0f <= f3InitialProject.y) && (f3InitialProject.y <= 1.0f);
+
 		// 다각형을 구성하는 모든 정점들을 원근 투영 변환하고 선분으로 렌더링 
 		for (int i = 1; i < nVertices; i++)
 		{
 			CPoint3D f3CurrentProject = CGraphicsPipeline::Project(pVertices[i].m_f3Position);
+
 			// 변환된 점이 투영 사각형에 포함되는 가를 계산
 			bCurrentInside = (-1.0f <= f3CurrentProject.x) && (f3CurrentProject.x <= 1.0f) && 
 				(-1.0f <= f3CurrentProject.y) && (f3CurrentProject.y <= 1.0f);
+
 			// 변환된 점이 투영 사각형에 포함되면 이전 점과 현재 점을 선분으로 그림
 			if (((f3PreviousProject.z >= 0.0f) || (f3CurrentProject.z >= 0.0f)) && ((bCurrentInside || bPreviousInside)))
 				::Draw2DLine(hDCFrameBuffer, f3PreviousProject, f3CurrentProject);
+
 			f3PreviousProject = f3CurrentProject;
 			bPreviousInside = bCurrentInside;
 		}
