@@ -84,6 +84,7 @@ D3D12_INPUT_LAYOUT_DESC CShader::CreateInputLayout()
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc;
 	d3dInputLayoutDesc.pInputElementDescs = NULL;
 	d3dInputLayoutDesc.NumElements = 0;
+
 	return(d3dInputLayoutDesc);
 }
 
@@ -93,6 +94,7 @@ D3D12_SHADER_BYTECODE CShader::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
 	D3D12_SHADER_BYTECODE d3dShaderByteCode;
 	d3dShaderByteCode.BytecodeLength = 0;
 	d3dShaderByteCode.pShaderBytecode = NULL;
+
 	return(d3dShaderByteCode);
 }
 
@@ -102,6 +104,7 @@ D3D12_SHADER_BYTECODE CShader::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
 	D3D12_SHADER_BYTECODE d3dShaderByteCode;
 	d3dShaderByteCode.BytecodeLength = 0;
 	d3dShaderByteCode.pShaderBytecode = NULL;
+
 	return(d3dShaderByteCode);
 }
 
@@ -125,6 +128,7 @@ D3D12_SHADER_BYTECODE CShader::CompileShaderFromFile(const WCHAR* pszFileName, L
 void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature * pd3dGraphicsRootSignature)
 {
 	ID3DBlob* pd3dVertexShaderBlob = NULL, * pd3dPixelShaderBlob = NULL;
+
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC d3dPipelineStateDesc;
 	::ZeroMemory(&d3dPipelineStateDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 	d3dPipelineStateDesc.pRootSignature = pd3dGraphicsRootSignature;
@@ -143,8 +147,10 @@ void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature * pd3dG
 	d3dPipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 	pd3dDevice->CreateGraphicsPipelineState(&d3dPipelineStateDesc,
 		__uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[0]);
+
 	if (pd3dVertexShaderBlob) pd3dVertexShaderBlob->Release();
 	if (pd3dPixelShaderBlob) pd3dPixelShaderBlob->Release();
+
 	if (d3dPipelineStateDesc.InputLayout.pInputElementDescs) delete[]
 		d3dPipelineStateDesc.InputLayout.pInputElementDescs;
 }
@@ -186,6 +192,8 @@ CDiffusedShader::~CDiffusedShader()
 {
 }
 
+// 셰이더 마다 다른 입력 구조를 갖게 하기 위해 
+// Diffuse 셰이더는 정점 버퍼를 쓰니까 자기한테 맞는 Input Layout을 직접 제공
 D3D12_INPUT_LAYOUT_DESC CDiffusedShader::CreateInputLayout()
 {
 	UINT nInputElementDescs = 2;
@@ -212,6 +220,8 @@ D3D12_SHADER_BYTECODE CDiffusedShader::CreatePixelShader(ID3DBlob** ppd3dShaderB
 		ppd3dShaderBlob));
 }
 
+// 부모는 파이프라인 만드는 방법을 알고 있고(실제 쉐이더 생성),
+// 자식은 어떤 셰이더를 쓸지만
 void CDiffusedShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature
 	* pd3dGraphicsRootSignature)
 {

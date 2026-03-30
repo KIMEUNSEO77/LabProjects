@@ -363,7 +363,7 @@ void CGameFramework::BuildObjects()
 {
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
-	//카메라 객체를 생성하여 뷰포트, 씨저 사각형, 투영 변환 행렬, 카메라 변환 행렬을 생성하고 설정한다.
+	// 카메라 객체를 생성하여 뷰포트, 씨저 사각형, 투영 변환 행렬, 카메라 변환 행렬을 생성하고 설정
 	m_pCamera = new CCamera();
 	m_pCamera->SetViewport(0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 1.0f);
 	m_pCamera->SetScissorRect(0, 0, m_nWndClientWidth, m_nWndClientHeight);
@@ -505,10 +505,6 @@ void CGameFramework::FrameAdvance()
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
-	// 뷰포트와 씨저 사각형을 설정
-	//m_pd3dCommandList->RSSetViewports(1, &m_d3dViewport);
-	//m_pd3dCommandList->RSSetScissorRects(1, &m_d3dScissorRect);
-
 	// 현재 렌더 타겟에 대한 프리젠트가 끝나기를 기다림 
 	// 프리젠트가 끝나면 렌더 타겟 버퍼의 상태는 프리젠트 상태 (D3D12_RESOURCE_STATE_PRESENT)에서 
 	// 렌더 타겟 상태(D3D12_RESOURCE_STATE_RENDER_TARGET)로 바뀜
@@ -548,7 +544,7 @@ void CGameFramework::FrameAdvance()
 
 	// 렌더링 코드는 여기에 추가 ...
 
-	if (m_pScene) m_pScene->Render(m_pd3dCommandList);
+	if (m_pScene) m_pScene->Render(m_pd3dCommandList, m_pCamera);
 
 	// 현재 렌더 타겟에 대한 렌더링이 끝나기를 기다림
 	// GPU가 렌더 타겟(버퍼)을 더 이상 사용하지 않으면

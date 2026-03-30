@@ -2,6 +2,8 @@
 #pragma once
 
 #include "Mesh.h"
+#include "Camera.h"
+
 class CShader;
 
 class CGameObject
@@ -24,7 +26,7 @@ public:
 	virtual void SetShader(CShader* pShader);
 	virtual void Animate(float fTimeElapsed);  // 시간에 따라 움직임 (이동, 회전, 신축 등)
 	virtual void OnPrepareRender();            // 렌더 전 상태 준비
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList); // 실제 그릴지
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera); // 실제 그릴지
 
 	void Rotate(XMFLOAT3* pxmf3Axis, float fAngle); // 오브젝트를 회전시키는 함수
 };

@@ -10,6 +10,10 @@ CCamera::CCamera()
 	m_d3dScissorRect = { 0, 0, FRAME_BUFFER_WIDTH , FRAME_BUFFER_HEIGHT };
 }
 
+CCamera::~CCamera()
+{
+}
+
 void CCamera::SetViewport(int xTopLeft, int yTopLeft, int nWidth, int nHeight, float
 	fMinZ, float fMaxZ)
 {
@@ -49,11 +53,10 @@ void CCamera::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	XMFLOAT4X4 xmf4x4View;
 	XMStoreFloat4x4(&xmf4x4View, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4View)));
-	//루트 파라메터 인덱스 1의
+	// 루트 파라메터 인덱스 1의
 	pd3dCommandList->SetGraphicsRoot32BitConstants(1, 16, &xmf4x4View, 0);
 	XMFLOAT4X4 xmf4x4Projection;
-	XMStoreFloat4x4(&xmf4x4Projection,
-		XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4Projection)));
+	XMStoreFloat4x4(&xmf4x4Projection, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4Projection))); // 셰이더로 보내기 전 전치행렬로 변환 후 보냄
 	pd3dCommandList->SetGraphicsRoot32BitConstants(1, 16, &xmf4x4Projection, 16);
 }
 void CCamera::ReleaseShaderVariables()

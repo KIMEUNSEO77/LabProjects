@@ -57,15 +57,20 @@ protected:
 	int m_nPipelineStates = 0;
 };
 
-
+// 어떤 입력 데이터를 받을지, 버텍스 셰이더를 쓸지, 픽셀 셰이더를 쓸지
+// 어떻게 GPU 파이프라인을 구성할지
+// 셰이더의 구체적인 구현 클래스
 class CDiffusedShader : public CShader
 {
 public:
 	CDiffusedShader();
 	virtual ~CDiffusedShader();
+
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
+
 	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob** ppd3dShaderBlob);
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
+
 	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature
 		* pd3dGraphicsRootSignature);
 };
