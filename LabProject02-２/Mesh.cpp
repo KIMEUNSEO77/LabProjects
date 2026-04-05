@@ -46,11 +46,10 @@ void CMesh::SetPolygon(int nIndex, CPolygon* pPolygon)
 		m_ppPolygons[nIndex] = pPolygon;
 }
 
-void Draw2DLine(HDC hDCFrameBuffer, CPoint3D& f3PreviousProject, CPoint3D& f3CurrentProject)
+void Draw2DLine(HDC hDCFrameBuffer, XMFLOAT3& f3PreviousProject, XMFLOAT3& f3CurrentProject)
 {
-	// 투영 좌표계의 두 점을 화면 좌표계로 변환하고 변환된 두 점(픽셀)을 선분으로 그림  
-	CPoint3D f3Previous = CGraphicsPipeline::ScreenTransform(f3PreviousProject);
-	CPoint3D f3Current = CGraphicsPipeline::ScreenTransform(f3CurrentProject);
+	XMFLOAT3 f3Previous = CGraphicsPipeline::ScreenTransform(f3PreviousProject);
+	XMFLOAT3 f3Current = CGraphicsPipeline::ScreenTransform(f3CurrentProject);
 
 	::MoveToEx(hDCFrameBuffer, (long)f3Previous.x, (long)f3Previous.y, NULL);
 	::LineTo(hDCFrameBuffer, (long)f3Current.x, (long)f3Current.y);
