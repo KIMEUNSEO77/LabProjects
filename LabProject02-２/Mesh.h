@@ -67,10 +67,10 @@ class CVertex
 {
 public:
 	CVertex() {}
-	CVertex(float x, float y, float z) { m_f3Position = CPoint3D(x, y, z); }
+	CVertex(float x, float y, float z) { m_xmf3Position = XMFLOAT3(x, y, z); }
 	virtual ~CVertex() {}
 
-	CPoint3D m_f3Position;
+	XMFLOAT3 m_xmf3Position;
 };
 
 // 하나의 면
