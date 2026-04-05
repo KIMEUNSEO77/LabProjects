@@ -60,14 +60,14 @@ public:
 class CViewport
 {
 public:
-	CViewport(int nLeft, int nTop, int nWidth, int nHeight) {
-		m_nLeft = nLeft; m_nTop = nTop; m_nWidth = nWidth; m_nHeight = nHeight;
-	}
+	CViewport() {}
 	virtual ~CViewport() {}
 
-	int m_nLeft = 0;
-	int m_nTop = 0;
-	int m_nWidth = 0;
-	int m_nHeight = 0;
+	int m_nLeft;
+	int m_nTop;
+	int m_nWidth;
+	int m_nHeight;
+
+	void SetViewport(int nLeft, int nTop, int nWidth, int nHeight);
 };
 
