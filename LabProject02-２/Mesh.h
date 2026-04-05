@@ -88,3 +88,11 @@ public:
 	void SetVertex(int nIndex, CVertex vertex);
 };
 
+// 비행기 클래스 선언
+class CAirplaneMesh : public CMesh
+{
+public:
+	CAirplaneMesh(float fWidth, float fHeight, float fDepth);
+	virtual ~CAirplaneMesh() {}
+};
+
