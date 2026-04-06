@@ -30,12 +30,10 @@ public:
 	virtual void Render(HDC hDCFrameBuffer, CCamera* pCamera);
 
 
-	//윈도우 메시지(키보드, 마우스)를 처리한다.
+	// 윈도우 메시지(키보드, 마우스)를 처리
 	virtual void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID,
-		WPARAM wParam, LPARAM lParam) {
-	}
+		WPARAM wParam, LPARAM lParam) { }
 	virtual void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID,
-		WPARAM wParam, LPARAM lParam) {
-	}
+		WPARAM wParam, LPARAM lParam) { }
 };
 

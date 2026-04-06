@@ -9,12 +9,13 @@ class CGameTimer
 public:
 	CGameTimer();
 	virtual ~CGameTimer();
-	//타이머의 시간을 갱신한다.
+	// 타이머의 시간을 갱신
 	void Tick(float fLockFPS = 0.0f);
-	//프레임 레이트를 문자열로 반환한다.
-	unsigned long GetFrameRate(LPTSTR lpszString = NULL, int
-		nCharacters = 0);
-	//현재 프레임의 경과 시간을 반환한다.
+
+	// 프레임 레이트를 문자열로 반환
+	unsigned long GetFrameRate(LPTSTR lpszString = NULL, int nCharacters = 0);
+
+	// 현재 프레임의 경과 시간을 반환
 	float GetTimeElapsed();
 
 private:

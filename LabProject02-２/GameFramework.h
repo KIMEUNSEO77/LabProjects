@@ -60,7 +60,7 @@ public:
 	void AnimateObjects();
 	void FrameAdvance();
 
-	// 윈도우 메시지(키보드, 마우스)를 처리한다.
+	// 윈도우 메시지(키보드, 마우스)를 처리
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 		wParam, LPARAM lParam);
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM

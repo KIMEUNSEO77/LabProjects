@@ -58,31 +58,34 @@ void Draw2DLine(HDC hDCFrameBuffer, XMFLOAT3& f3PreviousProject, XMFLOAT3& f3Cur
 void CMesh::Render(HDC hDCFrameBuffer)
 {
 	XMFLOAT3 f3InitialProject, f3PreviousProject;
-	bool bPreviousInside = false, bInitialInside = false, bCurrentInside
-		= false, bIntersectInside = false;
+
+	bool bPreviousInside = false, bInitialInside = false, 
+		bCurrentInside = false, bIntersectInside = false;
+
 	for (int j = 0; j < m_nPolygons; j++)
 	{
 		int nVertices = m_ppPolygons[j]->m_nVertices;
 		CVertex* pVertices = m_ppPolygons[j]->m_pVertices;
+
 		f3PreviousProject = f3InitialProject = CGraphicsPipeline::Project(pVertices[0].m_xmf3Position);
-		bPreviousInside = bInitialInside = (-1.0f <= f3InitialProject.x)
-			&& (f3InitialProject.x <= 1.0f) && (-1.0f <= f3InitialProject.y) &&
-			(f3InitialProject.y <= 1.0f);
+		bPreviousInside = bInitialInside = (-1.0f <= f3InitialProject.x) && (f3InitialProject.x <= 1.0f) 
+			&& (-1.0f <= f3InitialProject.y) && (f3InitialProject.y <= 1.0f);
+
 		for (int i = 1; i < nVertices; i++)
 		{
 			XMFLOAT3 f3CurrentProject = CGraphicsPipeline::Project(pVertices[i].m_xmf3Position);
 			bCurrentInside = (-1.0f <= f3CurrentProject.x) &&
 				(f3CurrentProject.x <= 1.0f) && (-1.0f <= f3CurrentProject.y) &&
 				(f3CurrentProject.y <= 1.0f);
-			if (((0.0f <= f3CurrentProject.z) && (f3CurrentProject.z <=
-				1.0f)) && ((bCurrentInside || bPreviousInside)))
+
+			if (((0.0f <= f3CurrentProject.z) && (f3CurrentProject.z <= 1.0f)) && ((bCurrentInside || bPreviousInside)))
 				::Draw2DLine(hDCFrameBuffer, f3PreviousProject, f3CurrentProject);
+
 			f3PreviousProject = f3CurrentProject;
 			bPreviousInside = bCurrentInside;
 		}
-		if (((0.0f <= f3InitialProject.z) && (f3InitialProject.z <= 1.0f))
-			&& ((bInitialInside || bPreviousInside))) ::Draw2DLine(hDCFrameBuffer,
-				f3PreviousProject, f3InitialProject);
+		if (((0.0f <= f3InitialProject.z) && (f3InitialProject.z <= 1.0f)) && ((bInitialInside || bPreviousInside))) 
+			::Draw2DLine(hDCFrameBuffer, f3PreviousProject, f3InitialProject);
 	}
 }
 
@@ -143,8 +146,8 @@ CCubeMesh::~CCubeMesh()
 CAirplaneMesh::CAirplaneMesh(float fWidth, float fHeight, float fDepth) : CMesh(24)
 {
 	float fx = fWidth * 0.5f, fy = fHeight * 0.5f, fz = fDepth * 0.5f;
-	float x1 = fx * 0.2f, y1 = fy * 0.2f, x2 = fx * 0.1f, y3 = fy * 0.3f,
-		y2 = ((y1 - (fy - y3)) / x1) * x2 + (fy - y3);
+	float x1 = fx * 0.2f, y1 = fy * 0.2f, 
+		x2 = fx * 0.1f, y3 = fy * 0.3f, y2 = ((y1 - (fy - y3)) / x1) * x2 + (fy - y3);
 	int i = 0;
 
 	// 비행기 메쉬의 위쪽 면
@@ -153,33 +156,38 @@ CAirplaneMesh::CAirplaneMesh(float fWidth, float fHeight, float fDepth) : CMesh(
 	pFace->SetVertex(1, CVertex(+x1, -y1, -fz));
 	pFace->SetVertex(2, CVertex(0.0f, 0.0f, -fz));
 	SetPolygon(i++, pFace);
+
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(0.0f, +(fy + y3), -fz));
 	pFace->SetVertex(1, CVertex(0.0f, 0.0f, -fz));
 	pFace->SetVertex(2, CVertex(-x1, -y1, -fz));
 	SetPolygon(i++, pFace);
+
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(+x2, +y2, -fz));
 	pFace->SetVertex(1, CVertex(+fx, -y3, -fz));
 	pFace->SetVertex(2, CVertex(+x1, -y1, -fz));
 	SetPolygon(i++, pFace);
+
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(-x2, +y2, -fz));
 	pFace->SetVertex(1, CVertex(-x1, -y1, -fz));
 	pFace->SetVertex(2, CVertex(-fx, -y3, -fz));
 	SetPolygon(i++, pFace);
 
-	//비행기 메쉬의 아래쪽 면
+	// 비행기 메쉬의 아래쪽 면
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(0.0f, +(fy + y3), +fz));
 	pFace->SetVertex(1, CVertex(0.0f, 0.0f, +fz));
 	pFace->SetVertex(2, CVertex(+x1, -y1, +fz));
 	SetPolygon(i++, pFace);
+
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(0.0f, +(fy + y3), +fz));
 	pFace->SetVertex(1, CVertex(-x1, -y1, +fz));
 	pFace->SetVertex(2, CVertex(0.0f, 0.0f, +fz));
 	SetPolygon(i++, pFace);
+
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(+x2, +y2, +fz));
 	pFace->SetVertex(1, CVertex(+x1, -y1, +fz));
@@ -192,39 +200,44 @@ CAirplaneMesh::CAirplaneMesh(float fWidth, float fHeight, float fDepth) : CMesh(
 	pFace->SetVertex(2, CVertex(-x1, -y1, +fz));
 	SetPolygon(i++, pFace);
 
-	//비행기 메쉬의 오른쪽 면
+	// 비행기 메쉬의 오른쪽 면
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(0.0f, +(fy + y3), -fz));
 	pFace->SetVertex(1, CVertex(0.0f, +(fy + y3), +fz));
 	pFace->SetVertex(2, CVertex(+x2, +y2, -fz));
 	SetPolygon(i++, pFace);
+
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(+x2, +y2, -fz));
 	pFace->SetVertex(1, CVertex(0.0f, +(fy + y3), +fz));
 	pFace->SetVertex(2, CVertex(+x2, +y2, +fz));
 	SetPolygon(i++, pFace);
+
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(+x2, +y2, -fz));
 	pFace->SetVertex(1, CVertex(+x2, +y2, +fz));
 	pFace->SetVertex(2, CVertex(+fx, -y3, -fz));
 	SetPolygon(i++, pFace);
+
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(+fx, -y3, -fz));
 	pFace->SetVertex(1, CVertex(+x2, +y2, +fz));
 	pFace->SetVertex(2, CVertex(+fx, -y3, +fz));
 	SetPolygon(i++, pFace);
 
-	//비행기 메쉬의 뒤쪽/오른쪽 면
+	// 비행기 메쉬의 뒤쪽/오른쪽 면
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(+x1, -y1, -fz));
 	pFace->SetVertex(1, CVertex(+fx, -y3, -fz));
 	pFace->SetVertex(2, CVertex(+fx, -y3, +fz));
 	SetPolygon(i++, pFace);
+
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(+x1, -y1, -fz));
 	pFace->SetVertex(1, CVertex(+fx, -y3, +fz));
 	pFace->SetVertex(2, CVertex(+x1, -y1, +fz));
 	SetPolygon(i++, pFace);
+
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(0.0f, 0.0f, -fz));
 	pFace->SetVertex(1, CVertex(+x1, -y1, -fz));
@@ -237,39 +250,44 @@ CAirplaneMesh::CAirplaneMesh(float fWidth, float fHeight, float fDepth) : CMesh(
 	pFace->SetVertex(2, CVertex(0.0f, 0.0f, +fz));
 	SetPolygon(i++, pFace);
 
-	//비행기 메쉬의 왼쪽 면
+	// 비행기 메쉬의 왼쪽 면
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(0.0f, +(fy + y3), +fz));
 	pFace->SetVertex(1, CVertex(0.0f, +(fy + y3), -fz));
 	pFace->SetVertex(2, CVertex(-x2, +y2, -fz));
 	SetPolygon(i++, pFace);
+
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(0.0f, +(fy + y3), +fz));
 	pFace->SetVertex(1, CVertex(-x2, +y2, -fz));
 	pFace->SetVertex(2, CVertex(-x2, +y2, +fz));
 	SetPolygon(i++, pFace);
+
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(-x2, +y2, +fz));
 	pFace->SetVertex(1, CVertex(-x2, +y2, -fz));
 	pFace->SetVertex(2, CVertex(-fx, -y3, -fz));
 	SetPolygon(i++, pFace);
+
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(-x2, +y2, +fz));
 	pFace->SetVertex(1, CVertex(-fx, -y3, -fz));
 	pFace->SetVertex(2, CVertex(-fx, -y3, +fz));
 	SetPolygon(i++, pFace);
 
-	//비행기 메쉬의 뒤쪽/왼쪽 면
+	// 비행기 메쉬의 뒤쪽/왼쪽 면
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(0.0f, 0.0f, -fz));
 	pFace->SetVertex(1, CVertex(0.0f, 0.0f, +fz));
 	pFace->SetVertex(2, CVertex(-x1, -y1, +fz));
 	SetPolygon(i++, pFace);
+
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(0.0f, 0.0f, -fz));
 	pFace->SetVertex(1, CVertex(-x1, -y1, +fz));
 	pFace->SetVertex(2, CVertex(-x1, -y1, -fz));
 	SetPolygon(i++, pFace);
+
 	pFace = new CPolygon(3);
 	pFace->SetVertex(0, CVertex(-x1, -y1, -fz));
 	pFace->SetVertex(1, CVertex(-x1, -y1, +fz));

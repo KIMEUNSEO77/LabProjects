@@ -76,15 +76,18 @@ void CGameFramework::BuildObjects()
 	pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 	pCamera->GeneratePerspectiveProjectionMatrix(1.01f, 500.0f, 60.0f);
 	pCamera->SetFOVAngle(60.0f);
-	//비행기 메쉬를 생성하고 플레이어 객체에 연결한다.
+
+	// 비행기 메쉬를 생성하고 플레이어 객체에 연결
 	CAirplaneMesh* pAirplaneMesh = new CAirplaneMesh(6.0f, 6.0f, 1.0f);
 	m_pPlayer = new CAirplanePlayer();
 	m_pPlayer->SetPosition(0.0f, 0.0f, 0.0f);
 	m_pPlayer->SetMesh(pAirplaneMesh);
 	m_pPlayer->SetColor(RGB(0, 0, 255));
 	m_pPlayer->SetCamera(pCamera);
-	//카메라는 플레이어 객체 뒤쪽 위에서 플레이어를 바라본다.
+
+	// 카메라는 플레이어 객체 뒤쪽 위에서 플레이어를 바라봄
 	m_pPlayer->SetCameraOffset(XMFLOAT3(0.0f, 5.0f, -15.0f));
+
 	m_pScene = new CScene(m_pPlayer);
 	m_pScene->BuildObjects();
 
@@ -102,9 +105,9 @@ void CGameFramework::ProcessInput()
 {
 	static UCHAR pKeyBuffer[256];
 
-	/*키보드의 상태 정보를 반환한다. 화살표 키(‘→’, ‘←’, ‘↑’, ‘↓’)를 누르면 플레이어를 오른쪽/왼쪽(로
-컬 x-축), 앞/뒤(로컬 z-축)로 이동한다. ‘Page Up’과 ‘Page Down’ 키를 누르면 플레이어를 위/아래(로
-컬 y-축)로 이동한다.*/
+	// 키보드의 상태 정보를 반환 
+	// 화살표 키(‘→’, ‘←’, ‘↑’, ‘↓’)를 누르면 플레이어를 오른쪽/왼쪽(로컬 x-축), 앞/뒤(로컬 z-축)로 이동
+	// ‘Page Up’과 ‘Page Down’ 키를 누르면 플레이어를 위/아래(로컬 y-축)로 이동
 	if (::GetKeyboardState(pKeyBuffer))
 	{
 		DWORD dwDirection = 0;
@@ -116,7 +119,7 @@ void CGameFramework::ProcessInput()
 		if (pKeyBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
 		if (pKeyBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
 
-		//키 입력이 있으면 플레이어를 dwDirection 방향으로 이동한다(실제로는 속도 벡터를 변경한다).
+		// 키 입력이 있으면 플레이어를 dwDirection 방향으로 이동(실제로는 속도 벡터를 변경)
 		if (dwDirection) m_pPlayer->Move(dwDirection, 0.15f);
 	}
 
@@ -127,21 +130,24 @@ void CGameFramework::ProcessInput()
 		때 마우스를 캡쳐하였다. 그러므로 마우스가 캡쳐된 윈도우가 현재 윈도우이면 마우스 버튼이 현재 윈도
 		우의 클라이언트 영역에서 눌려진 상태를 의미한다. 마우스 버튼이 눌려진 상태에서 마우스를 좌우 또는
 		상하로 움직이면 플레이어를 x-축 또는 y-축으로 회전한다.*/
-		//마우스 커서를 화면에서 없앤다(보이지 않게 한다).
+
+		// 마우스 커서를 화면에서 없앰(보이지 않게)
 		::SetCursor(NULL);
 		POINT ptCursorPos;
-		//현재 마우스 커서의 위치를 가져온다.
+
+		// 현재 마우스 커서의 위치를 가져옴
 		::GetCursorPos(&ptCursorPos);
-		//마우스 버튼이 눌린 상태에서 마우스가 움직인 양을 구한다.
-		float cxMouseDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) /
-			3.0f;
-		float cyMouseDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) /
-			3.0f;
-		//마우스 커서의 위치를 마우스가 눌려졌던 위치로 설정한다.
+
+		// 마우스 버튼이 눌린 상태에서 마우스가 움직인 양을 구함
+		float cxMouseDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
+		float cyMouseDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
+
+		// 마우스 커서의 위치를 마우스가 눌려졌던 위치로 설정
 		::SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
+
 		if (cxMouseDelta || cyMouseDelta)
 		{
-			//마우스 이동이 있으면 플레이어를 회전한다.
+			// 마우스 이동이 있으면 플레이어를 회전
 			/*cxDelta는 y-축의 회전을 나타내고 cyDelta는 x-축의 회전을 나타낸다. 오른쪽 마우스 버튼이 눌려진
 			경우 cxDelta는 z-축의 회전을 나타낸다.*/
 			if (pKeyBuffer[VK_RBUTTON] & 0xF0)
@@ -151,7 +157,7 @@ void CGameFramework::ProcessInput()
 		}	
 	}
 
-	//플레이어를 실제로 이동하고 카메라를 갱신한다. 마찰력의 영향을 속도 벡터에 적용한다.
+	// 플레이어를 실제로 이동하고 카메라를 갱신. 마찰력의 영향을 속도 벡터에 적용
 	m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
 }
 
@@ -183,13 +189,13 @@ void CGameFramework::FrameAdvance()
 	CCamera* pCamera = m_pPlayer->GetCamera();
 	if (m_pScene) m_pScene->Render(m_hDCFrameBuffer, pCamera);
 
-	//플레이어(비행기)를 렌더링한다.
+	// 플레이어(비행기)를 렌더링
 	if (m_pPlayer) m_pPlayer->Render(m_hDCFrameBuffer, pCamera);
 
 	// 렌더링을 한 화면(비트맵)을 클라이언트 영역으로 복사
 	PresentFrameBuffer();
 
-	//현재 프레임 레이트를 윈도우 캡션(타이틀 바)에 출력한다.
+	// 현재 프레임 레이트를 윈도우 캡션(타이틀 바)에 출력
 	m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
 	::SetWindowText(m_hWnd, m_pszFrameRate);
 }
@@ -199,13 +205,14 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT
 {
 	switch (nMessageID)
 	{
-		//마우스 캡쳐를 하고 현재 마우스 위치를 가져온다.
+		// 마우스 캡쳐를 하고 현재 마우스 위치를 가져옴
 	case WM_RBUTTONDOWN:
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
 		break;
-		//마우스 캡쳐를 해제한다.
+
+		// 마우스 캡쳐를 해제
 	case WM_LBUTTONUP:
 	case WM_RBUTTONUP:
 		::ReleaseCapture();

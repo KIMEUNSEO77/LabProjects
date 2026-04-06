@@ -8,8 +8,10 @@ void CScene::BuildObjects()
 {
 	// 직육면체 메쉬를 생성
 	CCubeMesh* pCubeMesh = new CCubeMesh(4.0f, 4.0f, 4.0f);
+
 	m_nObjects = 5;
 	m_ppObjects = new CGameObject * [m_nObjects];
+
 	m_ppObjects[0] = new CGameObject();
 	m_ppObjects[0]->SetMesh(pCubeMesh);
 	m_ppObjects[0]->SetColor(RGB(255, 0, 0));
@@ -18,6 +20,7 @@ void CScene::BuildObjects()
 	m_ppObjects[0]->SetRotationSpeed(90.0f);
 	m_ppObjects[0]->SetMovingDirection(XMFLOAT3(1.0f, 0.0f, 0.0f));
 	m_ppObjects[0]->SetMovingSpeed(0.5f);
+
 	m_ppObjects[1] = new CGameObject();
 	m_ppObjects[1]->SetMesh(pCubeMesh);
 	m_ppObjects[1]->SetColor(RGB(0, 0, 255));
@@ -26,6 +29,7 @@ void CScene::BuildObjects()
 	m_ppObjects[1]->SetRotationSpeed(180.0f);
 	m_ppObjects[1]->SetMovingDirection(XMFLOAT3(-1.0f, 0.0f, 0.0f));
 	m_ppObjects[1]->SetMovingSpeed(1.5f);
+
 	m_ppObjects[2] = new CGameObject();
 	m_ppObjects[2]->SetMesh(pCubeMesh);
 	m_ppObjects[2]->SetColor(RGB(0, 255, 0));
@@ -34,6 +38,7 @@ void CScene::BuildObjects()
 	m_ppObjects[2]->SetRotationSpeed(30.15f);
 	m_ppObjects[2]->SetMovingDirection(XMFLOAT3(1.0f, -1.0f, 0.0f));
 	m_ppObjects[2]->SetMovingSpeed(0.0f);
+
 	m_ppObjects[3] = new CGameObject();
 	m_ppObjects[3]->SetMesh(pCubeMesh);
 	m_ppObjects[3]->SetColor(RGB(0, 255, 255));
@@ -42,6 +47,7 @@ void CScene::BuildObjects()
 	m_ppObjects[3]->SetRotationSpeed(40.6f);
 	m_ppObjects[3]->SetMovingDirection(XMFLOAT3(0.0f, 0.0f, 1.0f));
 	m_ppObjects[3]->SetMovingSpeed(0.0f);
+
 	m_ppObjects[4] = new CGameObject();
 	m_ppObjects[4]->SetMesh(pCubeMesh);
 	m_ppObjects[4]->SetColor(RGB(128, 0, 255));
