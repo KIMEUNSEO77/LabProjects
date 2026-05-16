@@ -48,6 +48,7 @@ void CMesh::SetPolygon(int nIndex, CPolygon* pPolygon)
 
 void Draw2DLine(HDC hDCFrameBuffer, XMFLOAT3& f3PreviousProject, XMFLOAT3& f3CurrentProject)
 {
+	// 투영 좌표계 두 점을 화면 좌표계로 변환하고 변환된 두 점(픽셀)을 선분으로 그림
 	XMFLOAT3 f3Previous = CGraphicsPipeline::ScreenTransform(f3PreviousProject);
 	XMFLOAT3 f3Current = CGraphicsPipeline::ScreenTransform(f3CurrentProject);
 
@@ -67,23 +68,31 @@ void CMesh::Render(HDC hDCFrameBuffer)
 		int nVertices = m_ppPolygons[j]->m_nVertices;
 		CVertex* pVertices = m_ppPolygons[j]->m_pVertices;
 
+		// 다각형의 첫 번째 정점을 원근 투영 변환
 		f3PreviousProject = f3InitialProject = CGraphicsPipeline::Project(pVertices[0].m_xmf3Position);
+
+		// 변환된 점이 투영 사각형에 포함되는 가를 계산
 		bPreviousInside = bInitialInside = (-1.0f <= f3InitialProject.x) && (f3InitialProject.x <= 1.0f) 
 			&& (-1.0f <= f3InitialProject.y) && (f3InitialProject.y <= 1.0f);
 
+		// 다각형을 구성하는 모든 정점들을 원근 투영 변환하고 선분으로 렌더링
 		for (int i = 1; i < nVertices; i++)
 		{
 			XMFLOAT3 f3CurrentProject = CGraphicsPipeline::Project(pVertices[i].m_xmf3Position);
+
+			// 변환된 점이 투영 사각형에 포함되는 가 계산
 			bCurrentInside = (-1.0f <= f3CurrentProject.x) &&
 				(f3CurrentProject.x <= 1.0f) && (-1.0f <= f3CurrentProject.y) &&
 				(f3CurrentProject.y <= 1.0f);
 
+			// 변환된 점이 투영 사각형에 포함되면 이전 점과 현재 점을 선분으로 그림
 			if (((0.0f <= f3CurrentProject.z) && (f3CurrentProject.z <= 1.0f)) && ((bCurrentInside || bPreviousInside)))
 				::Draw2DLine(hDCFrameBuffer, f3PreviousProject, f3CurrentProject);
 
 			f3PreviousProject = f3CurrentProject;
 			bPreviousInside = bCurrentInside;
 		}
+		// 다각형의 마지막 정점과 다각형의 시작점을 선분으로 그림
 		if (((0.0f <= f3InitialProject.z) && (f3InitialProject.z <= 1.0f)) && ((bInitialInside || bPreviousInside))) 
 			::Draw2DLine(hDCFrameBuffer, f3PreviousProject, f3InitialProject);
 	}

@@ -25,13 +25,18 @@
 
 #include <Mmsystem.h>
 #pragma comment(lib, "winmm.lib")
+
+// DirectX Math 라이브러리
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 #include <DirectXCollision.h>
+
+// 편리한 함수 사용을 위한 네임스페이스
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
+// 방향 매크로
 #define DIR_FORWARD		0x01 
 #define DIR_BACKWARD	0x02
 #define DIR_LEFT		0x04
@@ -41,6 +46,7 @@ using namespace DirectX::PackedVector;
 
 namespace Matrix4x4
 {
+	// 단위 행렬 생성 함수
 	inline XMFLOAT4X4 Identity()
 	{
 		XMFLOAT4X4 xmmtx4x4Result;

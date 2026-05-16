@@ -17,7 +17,7 @@ public:
 	// 게임 객체의 모양(메쉬, 모델)
 	CMesh* m_pMesh = NULL;
 
-	// 게임 객체의 월드 변환 행렬
+	// 게임 객체의 월드 변환 행렬 (위치, 회전, 크기 변환을 포함하는 행렬)
 	XMFLOAT4X4 m_xmf4x4World = Matrix4x4::Identity();
 
 	// 게임 객체의 색상(선분의 색상)

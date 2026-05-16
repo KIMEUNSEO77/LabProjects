@@ -13,6 +13,7 @@ void CPlayer::SetPosition(float x, float y, float z)
 void CPlayer::SetCameraOffset(const XMFLOAT3& xmf3CameraOffset)
 {
 	m_xmf3CameraOffset = xmf3CameraOffset;
+
 	XMFLOAT3 xmf3CameraPosition;
 	XMStoreFloat3(&xmf3CameraPosition,
 		XMVectorAdd(XMLoadFloat3(&m_xmf3Position),
@@ -158,6 +159,7 @@ void CPlayer::LookAt(XMFLOAT3& xmf3LookAt, XMFLOAT3& xmf3Up)
 void CPlayer::Update(float fTimeElapsed)
 {
 	Move(m_xmf3Velocity, false);
+
 	m_pCamera->Update(this, m_xmf3Position, fTimeElapsed);
 	m_pCamera->GenerateViewMatrix();
 
@@ -214,6 +216,7 @@ CAirplanePlayer::~CAirplanePlayer()
 void CAirplanePlayer::OnUpdateTransform()
 {
 	CPlayer::OnUpdateTransform();
+
 	XMStoreFloat4x4(&m_xmf4x4World,
 		XMMatrixMultiply(XMMatrixRotationRollPitchYaw(XMConvertToRadians(90.0f), 0.0f, 0.0f), XMLoadFloat4x4(&m_xmf4x4World)));
 }

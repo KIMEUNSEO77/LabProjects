@@ -72,6 +72,7 @@ void CGameFramework::PresentFrameBuffer()
 
 void CGameFramework::BuildObjects()
 {
+	// 카메라를 생성하고 뷰포트와 시야각(FOV)를 설정
 	CCamera* pCamera = new CCamera();
 	pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 	pCamera->GeneratePerspectiveProjectionMatrix(1.01f, 500.0f, 60.0f);

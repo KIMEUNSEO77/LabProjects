@@ -70,6 +70,7 @@ public:
 	CVertex(float x, float y, float z) { m_xmf3Position = XMFLOAT3(x, y, z); }
 	virtual ~CVertex() {}
 
+	// DirectX 제공 구조체
 	XMFLOAT3 m_xmf3Position;
 };
 
