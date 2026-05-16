@@ -26,9 +26,7 @@ public:
 	virtual void SetShader(CShader* pShader);
 	virtual void Animate(float fTimeElapsed);  // 시간에 따라 움직임 (이동, 회전, 신축 등)
 	virtual void OnPrepareRender();            // 렌더 전 상태 준비
-
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera); // 실제 그릴지
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, UINT nInstances);
 
 	void Rotate(XMFLOAT3* pxmf3Axis, float fAngle); // 오브젝트를 회전시키는 함수
 
@@ -37,7 +35,6 @@ public:
 	XMFLOAT3 GetLook();
 	XMFLOAT3 GetUp();
 	XMFLOAT3 GetRight();
-	const XMFLOAT4X4& GetWorldMatrix() const { return m_xmf4x4World; }
 
 	// 게임 객체의 위치를 설정
 	void SetPosition(float x, float y, float z);
@@ -56,6 +53,9 @@ public:
 	// 상수 버퍼의 내용을 갱신
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void ReleaseShaderVariables();
+
+	// 게임 객체가 카메라에 보인는 가를 검사
+	bool IsVisible(CCamera* pCamera = NULL);
 };
 
 class CRotatingObject : public CGameObject

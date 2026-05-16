@@ -10,13 +10,6 @@ struct CB_GAMEOBJECT_INFO
 	XMFLOAT4X4 m_xmf4x4World;
 };
 
-// 인스턴스 정보 (게임 객체의 월드 변환 행렬과 객체의 색상)를 위한 구조체
-struct VS_VB_INSTANCE
-{
-	XMFLOAT4X4 m_xmf4x4Transform;
-	XMFLOAT4 m_xmcColor;
-};
-
 // 셰이더 소스 코드를 컴파일하고 그래픽스 상태 객체를 생성
 // hlsl 파일을 컴파일 하고, 그 셰이더를 실제 GPU 파이프라인에 연결해서 여러 오브젝트들을 관리하며 렌더링 하는 관리자 클래스
 class CShader
@@ -89,7 +82,8 @@ public:
 	CObjectsShader();
 	virtual ~CObjectsShader();
 
-	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
+		void* pContext);
 	virtual void AnimateObjects(float fTimeElapsed);
 	virtual void ReleaseObjects();
 
@@ -106,25 +100,16 @@ protected:
 	int m_nObjects = 0;
 };
 
-class CInstancingShader : public CObjectsShader
+class CTerrainShader : public CShader
 {
 public:
-	CInstancingShader();
-	virtual ~CInstancingShader();
+	CTerrainShader();
+	virtual ~CTerrainShader();
+
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob** ppd3dShaderBlob);
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
-	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature
-		* pd3dGraphicsRootSignature);
-	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
-		* pd3dCommandList);
-	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
-	virtual void ReleaseShaderVariables();
-	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
-		* pd3dCommandList);
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
-protected:
-	//인스턴스 데이터를 포함하는 버퍼와 포인터이다.
-	ID3D12Resource* m_pd3dcbGameObjects = NULL;
-	VS_VB_INSTANCE* m_pcbMappedGameObjects = NULL;
+
+	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature);
 };
+

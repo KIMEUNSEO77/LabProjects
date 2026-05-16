@@ -27,12 +27,14 @@ public:
 	ID3D12RootSignature* CreateGraphicsRootSignature(ID3D12Device* pd3dDevice);
 	ID3D12RootSignature* GetGraphicsRootSignature();
 
+	CHeightMapTerrain* GetTerrain() { return(m_pTerrain); }
+
 protected:	
 	// 배치(Batch) 처리를 하기 위해 씬을 셰이더들의 리스트로 표현
-	//CObjectsShader* m_pShaders = NULL;
-	CInstancingShader* m_pShaders = NULL;
+	CObjectsShader* m_pShaders = NULL;
 	int m_nShaders = 0;
 
+	CHeightMapTerrain* m_pTerrain = NULL;
 
 	// 렌더링 파이프라인의 "설정 정보"를 GPU에게 전달하는 중요한 객체들
 	// 

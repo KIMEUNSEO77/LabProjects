@@ -17,13 +17,31 @@ void CScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList * 
 	// 그래픽 루트 시그너쳐를 생성
 	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
+	// 지형을 확대할 스케일 벡터. x-축과 z-축은 8배, y-축은 2배 확대
+	XMFLOAT3 xmf3Scale(8.0f, 2.0f, 8.0f);
+	XMFLOAT4 xmf4Color(0.0f, 0.2f, 0.0f, 0.0f);
+
+	// 지형을 높이 맵 이미지 파일(HeightMap.raw)을 사용하여 생성. 높이 맵의 크기는 가로x세로(257x257)
+#ifdef _WITH_TERRAIN_PARTITION
+/*하나의 격자 메쉬의 크기는 가로x세로(17x17)이다. 지형 전체는 가로 방향으로 16개, 세로 방향으로 16의 격자 메
+쉬를 가진다. 지형을 구성하는 격자 메쉬의 개수는 총 256(16x16)개가 된다.*/
+	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList,
+		m_pd3dGraphicsRootSignature, _T("../Assets/Image/Terrain/HeightMap.raw"), 257, 257, 17,
+		17, xmf3Scale, xmf4Color);
+#else
+// 지형을 하나의 격자 메쉬(257x257)로 생성 
+	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList,
+		m_pd3dGraphicsRootSignature, _T("../Assets/Image/Terrain/HeightMap.raw"), 257, 257, 257,
+		257, xmf3Scale, xmf4Color);
+#endif
+
 	m_nShaders = 1;
-	m_pShaders = new CInstancingShader[m_nShaders];
+	m_pShaders = new CObjectsShader[m_nShaders];
 
 	// 루트 시그니처를 이용해 shader (PSO) 생성
 	m_pShaders[0].CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature);
 	// shader가 관리하는 게임 객체들을 생성
-	m_pShaders[0].BuildObjects(pd3dDevice, pd3dCommandList);
+	m_pShaders[0].BuildObjects(pd3dDevice, pd3dCommandList, m_pTerrain);
 }
 
 void CScene::ReleaseObjects()
@@ -37,6 +55,8 @@ void CScene::ReleaseObjects()
 	}
 
 	if (m_pShaders) delete[] m_pShaders;
+
+	if (m_pTerrain) delete m_pTerrain;
 }
 
 bool CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -69,6 +89,8 @@ void CScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera
 	// 카메라의 View 행렬, Projection 행렬 같은 값을 GPU 셰이더에 넘김
 	pCamera->UpdateShaderVariables(pd3dCommandList);
 
+	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
+
 	for (int i = 0; i < m_nShaders; i++)
 	{
 		m_pShaders[i].Render(pd3dCommandList, pCamera);
@@ -78,6 +100,7 @@ void CScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera
 void CScene::ReleaseUploadBuffers()
 {
 	for (int i = 0; i < m_nShaders; i++) m_pShaders[i].ReleaseUploadBuffers();
+	if (m_pTerrain) m_pTerrain->ReleaseUploadBuffers();
 }
 
 ID3D12RootSignature* CScene::GetGraphicsRootSignature()
@@ -91,33 +114,25 @@ ID3D12RootSignature* CScene::CreateGraphicsRootSignature(ID3D12Device* pd3dDevic
 
 	// 원래는 셰이더에 루트 시그니처를 통해 전달되는 값이 아무것도 없는 상태였지만,
 	// 셰이더로 상수 2세트를 넘기는 통로가 됨
-	D3D12_ROOT_PARAMETER pd3dRootParameters[3];
-
+	D3D12_ROOT_PARAMETER pd3dRootParameters[2];
 	pd3dRootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
 	pd3dRootParameters[0].Constants.Num32BitValues = 16;
-	pd3dRootParameters[0].Constants.ShaderRegister = 0;  // b0: Player
+	pd3dRootParameters[0].Constants.ShaderRegister = 0;
 	pd3dRootParameters[0].Constants.RegisterSpace = 0;
 	// 루트 시그니처의 이 데이터는 오직 버텍스 셰이더만 쓰게 하겠다
 	pd3dRootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 	pd3dRootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
 	pd3dRootParameters[1].Constants.Num32BitValues = 32;
-	pd3dRootParameters[1].Constants.ShaderRegister = 1;  // b1: Camera
+	pd3dRootParameters[1].Constants.ShaderRegister = 1;
 	pd3dRootParameters[1].Constants.RegisterSpace = 0;
 	// 루트 시그니처의 이 데이터는 오직 버텍스 셰이더만 쓰게 하겠다
 	pd3dRootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-
-	pd3dRootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_SRV;
-	pd3dRootParameters[2].Descriptor.ShaderRegister = 0; //t0
-	pd3dRootParameters[2].Descriptor.RegisterSpace = 0;
-	pd3dRootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-
 	D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
 		D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
 		D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
 		D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
 		D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS;
-
 	D3D12_ROOT_SIGNATURE_DESC d3dRootSignatureDesc;
 	::ZeroMemory(&d3dRootSignatureDesc, sizeof(D3D12_ROOT_SIGNATURE_DESC));
 	d3dRootSignatureDesc.NumParameters = _countof(pd3dRootParameters);
@@ -135,7 +150,6 @@ ID3D12RootSignature* CScene::CreateGraphicsRootSignature(ID3D12Device* pd3dDevic
 			**)&pd3dGraphicsRootSignature);
 	if (pd3dSignatureBlob) pd3dSignatureBlob->Release();
 	if (pd3dErrorBlob) pd3dErrorBlob->Release();
-
 	return(pd3dGraphicsRootSignature);
 }
 

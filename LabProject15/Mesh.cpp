@@ -45,23 +45,6 @@ void CMesh::Render(ID3D12GraphicsCommandList* pd3dCommandList)
 	}
 }
 
-// 인스턴싱을 사용하여 메쉬를 렌더링하는 함수. nInstances는 렌더링할 인스턴스 개수
-void CMesh::Render(ID3D12GraphicsCommandList* pd3dCommandList, UINT nInstances)
-{
-	pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, &m_d3dVertexBufferView);
-	pd3dCommandList->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
-
-	if (m_pd3dIndexBuffer)
-	{
-		pd3dCommandList->IASetIndexBuffer(&m_d3dIndexBufferView);
-		pd3dCommandList->DrawIndexedInstanced(m_nIndices, nInstances, 0, 0, 0);
-	}
-	else
-	{
-		pd3dCommandList->DrawInstanced(m_nVertices, nInstances, m_nOffset, 0);
-	}
-}
-
 CTriangleMesh::CTriangleMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	* pd3dCommandList) : CMesh(pd3dDevice, pd3dCommandList)
 {
@@ -158,6 +141,9 @@ CCubeMeshDiffused::CCubeMeshDiffused(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	m_d3dIndexBufferView.BufferLocation = m_pd3dIndexBuffer->GetGPUVirtualAddress();
 	m_d3dIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
 	m_d3dIndexBufferView.SizeInBytes = sizeof(UINT) * m_nIndices;
+
+	// 메쉬의 바운딩 박스(모델 좌표계)를 생성
+	m_xmBoundingBox = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(fx, fy, fz), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 }
 
 CCubeMeshDiffused::~CCubeMeshDiffused()
@@ -345,6 +331,9 @@ CAirplaneMeshDiffused::CAirplaneMeshDiffused(ID3D12Device* pd3dDevice,
 	m_d3dVertexBufferView.BufferLocation = m_pd3dVertexBuffer->GetGPUVirtualAddress();
 	m_d3dVertexBufferView.StrideInBytes = m_nStride;
 	m_d3dVertexBufferView.SizeInBytes = m_nStride * m_nVertices;
+
+	// 메쉬의 바운딩 박스(모델 좌표계)를 생성
+	m_xmBoundingBox = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(fx, fy, fz), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 }
 CAirplaneMeshDiffused::~CAirplaneMeshDiffused()
 {

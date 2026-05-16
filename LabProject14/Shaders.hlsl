@@ -3,15 +3,6 @@
 // HLSL(High-Level Shading Language)로, DirectX에서 GPU를 작성하는 언어
 // 
 
-// 인스턴싱 데이터를 위한 구조체
-struct INSTANCEDGAMEOBJECTINFO
-{
-    matrix m_mtxGameObject;
-    float4 m_cColor;
-};
-
-StructuredBuffer<INSTANCEDGAMEOBJECTINFO> gGameObjectInfos : register(t0);
-
 // CPU에서 만든 값 → GPU 셰이더로 전달하기 위해 상수 버퍼(Constant Buffer)를 선언
 // CPU에서 계산한 행렬을 셰이더가 받아서 사용, 즉 실제 3D 렌더링이 시작된 것
 
@@ -41,7 +32,7 @@ struct VS_OUTPUT
     float4 color : COLOR;
 };
 
-// 정점 셰이더
+// 정점 셰이더를 정의
 VS_OUTPUT VSDiffused(VS_INPUT input)
 {
     VS_OUTPUT output;
@@ -53,33 +44,8 @@ VS_OUTPUT VSDiffused(VS_INPUT input)
     return (output);
 }
 
-//픽셀 셰이더
+//픽셀 셰이더를 정의한다.
 float4 PSDiffused(VS_OUTPUT input) : SV_TARGET
-{
-    return (input.color);
-}
-
-// 인스턴싱용
-struct VS_INSTANCING_INPUT
-{
-    float3 position : POSITION;
-    float4 color : COLOR;
-};
-struct VS_INSTANCING_OUTPUT
-{
-    float4 position : SV_POSITION;
-    float4 color : COLOR;
-};
-VS_INSTANCING_OUTPUT VSInstancing(VS_INSTANCING_INPUT input, uint nInstanceID :
-SV_InstanceID)
-{
-    VS_INSTANCING_OUTPUT output;
-    output.position = mul(mul(mul(float4(input.position, 1.0f),
-gGameObjectInfos[nInstanceID].m_mtxGameObject), gmtxView), gmtxProjection);
-    output.color = input.color + gGameObjectInfos[nInstanceID].m_cColor;
-    return (output);
-}
-float4 PSInstancing(VS_INSTANCING_OUTPUT input) : SV_TARGET
 {
     return (input.color);
 }

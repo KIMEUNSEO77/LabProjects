@@ -48,19 +48,15 @@ void CGameObject::OnPrepareRender()
 
 void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
-	OnPrepareRender();
+	// 게임 객체가 카메라에 보이면 렌더링
+	if (IsVisible(pCamera))
+	{
+		// 객체의 정보를 셰이더 변수(상수 버퍼)로 복사
+		UpdateShaderVariables(pd3dCommandList);
 
-	// 객체의 정보를 셰이더 변수(상수 버퍼)로 복사
-	UpdateShaderVariables(pd3dCommandList);
-
-	if (m_pShader) m_pShader->Render(pd3dCommandList, pCamera);
-	if (m_pMesh) m_pMesh->Render(pd3dCommandList);
-}
-
-void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, UINT nInstances)
-{
-	OnPrepareRender();
-	if (m_pMesh) m_pMesh->Render(pd3dCommandList, nInstances);
+		if (m_pShader) m_pShader->Render(pd3dCommandList, pCamera);
+		if (m_pMesh) m_pMesh->Render(pd3dCommandList);
+	}
 }
 
 void CGameObject::Rotate(XMFLOAT3* pxmf3Axis, float fAngle)
@@ -173,4 +169,18 @@ void CGameObject::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandLi
 
 	// 객체의 월드 변환 행렬을 루트 상수(32-비트 값)를 통하여 셰이더 변수(상수 버퍼)로 복사
 	pd3dCommandList->SetGraphicsRoot32BitConstants(0, 16, &xmf4x4World, 0);
+}
+
+bool CGameObject::IsVisible(CCamera* pCamera)
+{
+	OnPrepareRender();
+
+	bool bIsVisible = false;
+
+	BoundingOrientedBox xmBoundingBox = m_pMesh->GetBoundingBox();
+	// 모델 좌표계의 바운딩 박스를 월드 좌표계로 변환
+	xmBoundingBox.Transform(xmBoundingBox, XMLoadFloat4x4(&m_xmf4x4World));
+	if (pCamera) bIsVisible = pCamera->IsInFrustum(xmBoundingBox);
+
+	return(bIsVisible);
 }

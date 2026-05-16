@@ -15,6 +15,8 @@ public:
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
 	void ReleaseUploadBuffers();
+
+	BoundingOrientedBox GetBoundingBox() { return m_xmBoundingBox; }
 protected:
 	ID3D12Resource* m_pd3dVertexBuffer = NULL;   // 정점 버퍼
 	ID3D12Resource* m_pd3dVertexUploadBuffer = NULL;  // CPU -> GPU 데이터 옮길 때 사용할 임시 버퍼
@@ -24,6 +26,9 @@ protected:
 	UINT m_nVertices = 0;  // 정점 개수
 	UINT m_nStride = 0;    // 정점 하나 크기(바이트 단위)
 	UINT m_nOffset = 0;    // 버퍼 시작 위치
+
+	// 모델 좌표계의 OOBB 바운딩 박스
+	BoundingOrientedBox m_xmBoundingBox;
 
 protected:
 	ID3D12Resource* m_pd3dIndexBuffer = NULL;   // 인덱스 버퍼 (인덱스 배열)
@@ -36,7 +41,6 @@ protected:
 	int m_nBaseVertex = 0;    // 인덱스 버퍼의 인덱스에 더해질 인덱스
 public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList);  // GPU에 메쉬를 렌더링하는 함수
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, UINT nInstances);
 };
 
 // 정점을 표현하기 위한 클래스를 선언 (한 점의 정보)
