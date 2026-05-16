@@ -4,6 +4,7 @@
 #include "Timer.h"
 #include "Scene.h"
 #include "Camera.h"
+#include "Player.h"
 
 // 게임 프로그램 뼈대
 // Direct3D 디바이스를 생성, 사용자 입력 처리, 애니메이션 등 화면 출력을 위한 여러 가지 처리 
@@ -65,6 +66,10 @@ private:
 	CScene* m_pScene; // 게임 씬 포인터 (게임의 모든 오브젝트와 로직을 관리하는 클래스)
 public:
 	CCamera* m_pCamera = NULL;
+	//플레이어 객체에 대한 포인터이다.
+	CPlayer* m_pPlayer = NULL;
+	//마지막으로 마우스 버튼을 클릭할 때의 마우스 커서의 위치이다.
+	POINT m_ptOldCursorPos;
 public:
 	CGameFramework();
 	~CGameFramework();
