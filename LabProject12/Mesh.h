@@ -36,6 +36,10 @@ protected:
 	int m_nBaseVertex = 0;    // 인덱스 버퍼의 인덱스에 더해질 인덱스
 public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList);  // GPU에 메쉬를 렌더링하는 함수
+	// 인스턴싱 렌더링을 위한 함수들
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, UINT nInstances);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, UINT nInstances,
+		D3D12_VERTEX_BUFFER_VIEW d3dInstancingBufferView);
 };
 
 // 정점을 표현하기 위한 클래스를 선언 (한 점의 정보)

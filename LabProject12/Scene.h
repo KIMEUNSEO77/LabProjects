@@ -29,7 +29,8 @@ public:
 
 protected:	
 	// 배치(Batch) 처리를 하기 위해 씬을 셰이더들의 리스트로 표현
-	CObjectsShader* m_pShaders = NULL;
+	//CObjectsShader* m_pShaders = NULL;
+	CInstancingShader* m_pShaders = NULL;
 	int m_nShaders = 0;
 
 
@@ -38,9 +39,5 @@ protected:
 	// 루트 시그너쳐를 나타내는 인터페이스 포인터
 	// GPU에게 어떤 데이터를 전달할지에 대한 규칙 (슬롯에 어떻게 연결할지?)
 	ID3D12RootSignature* m_pd3dGraphicsRootSignature = NULL;
-
-	// 파이프라인 상태를 나타내는 인터페이스 포인터
-	// GPU 렌더링 파이프라인의 전체 설정을 담고 있음. (어떻게 그릴지?)
-	//ID3D12PipelineState* m_pd3dPipelineState = NULL;
 };
 

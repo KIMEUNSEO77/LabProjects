@@ -27,14 +27,16 @@ public:
 	virtual void Animate(float fTimeElapsed);  // 시간에 따라 움직임 (이동, 회전, 신축 등)
 	virtual void OnPrepareRender();            // 렌더 전 상태 준비
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera); // 실제 그릴지
-
-	void Rotate(XMFLOAT3* pxmf3Axis, float fAngle); // 오브젝트를 회전시키는 함수
+	// 인스턴싱 렌더링을 위한 함수
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, UINT
+		nInstances, D3D12_VERTEX_BUFFER_VIEW d3dInstancingBufferView);
 
 	// 게임 객체의 월드 변환 행렬에서 위치 벡터와 방향(x-축, y-축, z-축) 벡터를 반환
 	XMFLOAT3 GetPosition();
 	XMFLOAT3 GetLook();
 	XMFLOAT3 GetUp();
 	XMFLOAT3 GetRight();
+	const XMFLOAT4X4& GetWorldMatrix() const { return m_xmf4x4World; }
 
 	// 게임 객체의 위치를 설정
 	void SetPosition(float x, float y, float z);
@@ -45,6 +47,7 @@ public:
 	void MoveUp(float fDistance = 1.0f);
 	void MoveForward(float fDistance = 1.0f);
 
+	void Rotate(XMFLOAT3* pxmf3Axis, float fAngle); // 오브젝트를 회전시키는 함수
 	// 게임 객체를 회전(x-축, y-축, z-축)
 	void Rotate(float fPitch = 10.0f, float fYaw = 10.0f, float fRoll = 10.0f);
 

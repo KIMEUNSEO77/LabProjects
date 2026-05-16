@@ -18,7 +18,7 @@ void CScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList * 
 	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
 	m_nShaders = 1;
-	m_pShaders = new CObjectsShader[m_nShaders];
+	m_pShaders = new CInstancingShader[m_nShaders];
 
 	// 루트 시그니처를 이용해 shader (PSO) 생성
 	m_pShaders[0].CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature);
