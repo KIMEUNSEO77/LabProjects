@@ -17,9 +17,9 @@ public:
 	void ReleaseUploadBuffers();
 
 	BoundingOrientedBox GetBoundingBox() { return m_xmBoundingBox; }
-	//광선과 메쉬의 교차를 검사하고 교차하는 횟수와 거리를 반환하는 함수이다.
-	int CheckRayIntersection(XMFLOAT3& xmRayPosition, XMFLOAT3& xmRayDirection, float
-		* pfNearHitDistance);
+
+	// 광선과 메쉬의 교차를 검사하고 교차하는 횟수와 거리를 반환하는 함수
+	int CheckRayIntersection(XMFLOAT3& xmRayPosition, XMFLOAT3& xmRayDirection, float* pfNearHitDistance);
 
 protected:
 	ID3D12Resource* m_pd3dVertexBuffer = NULL;   // 정점 버퍼

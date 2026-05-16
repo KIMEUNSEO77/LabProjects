@@ -72,6 +72,9 @@ public:
 
 	// 마지막으로 마우스 버튼을 클릭할 때의 마우스 커서의 위치
 	POINT m_ptOldCursorPos;
+
+	// 마우스 피킹으로 현재 선택된 게임 오브젝트에 대한 포인터
+	CGameObject* m_pSelectedObject = NULL;
 public:
 	CGameFramework();
 	~CGameFramework();
@@ -101,5 +104,7 @@ public:
 
 	void ChangeSwapChainState(); // 스왑 체인 상태 변경 (예: 전체 화면과 창 모드 간 전환)
 	void MoveToNextFrame(); // 다음 프레임으로 이동 (GPU와의 동기화 포함)
+
+	void ProcessSelectedObject(DWORD dwDirection, float cxDelta, float cyDelta);
 };
 
