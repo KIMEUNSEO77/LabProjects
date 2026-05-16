@@ -66,9 +66,11 @@ private:
 	CScene* m_pScene; // 게임 씬 포인터 (게임의 모든 오브젝트와 로직을 관리하는 클래스)
 public:
 	CCamera* m_pCamera = NULL;
-	//플레이어 객체에 대한 포인터이다.
+
+	// 플레이어 객체에 대한 포인터
 	CPlayer* m_pPlayer = NULL;
-	//마지막으로 마우스 버튼을 클릭할 때의 마우스 커서의 위치이다.
+
+	// 마지막으로 마우스 버튼을 클릭할 때의 마우스 커서의 위치
 	POINT m_ptOldCursorPos;
 public:
 	CGameFramework();
