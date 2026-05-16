@@ -182,7 +182,8 @@ void CPlayer::Update(float fTimeElapsed)
 	/*플레이어의 속도 벡터의 XZ-성분의 크기를 구한다. 이것이 XZ-평면의 최대 속력보다 크면 속도 벡터의 x와 z-방향
 성분을 조정한다.*/
 	float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
-	float fMaxVelocityXZ = m_fMaxVelocityXZ * fTimeElapsed;
+	//float fMaxVelocityXZ = m_fMaxVelocityXZ * fTimeElapsed;
+	float fMaxVelocityXZ = m_fMaxVelocityXZ;
 
 	if (fLength > m_fMaxVelocityXZ)
 	{
@@ -192,7 +193,8 @@ void CPlayer::Update(float fTimeElapsed)
 
 	/*플레이어의 속도 벡터의 y-성분의 크기를 구한다. 이것이 y-축 방향의 최대 속력보다 크면 속도 벡터의 y-방향 성
 분을 조정한다.*/
-	float fMaxVelocityY = m_fMaxVelocityY * fTimeElapsed;
+	//float fMaxVelocityY = m_fMaxVelocityY * fTimeElapsed;
+	float fMaxVelocityY = m_fMaxVelocityY;
 	fLength = sqrtf(m_xmf3Velocity.y * m_xmf3Velocity.y);
 	if (fLength > m_fMaxVelocityY) m_xmf3Velocity.y *= (fMaxVelocityY / fLength);
 
