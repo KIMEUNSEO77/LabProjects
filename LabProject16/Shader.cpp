@@ -280,7 +280,7 @@ void CObjectsShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 	// 가로x세로x높이가 12x12x12인 정육면체 메쉬를 생성
 	CCubeMeshDiffused* pCubeMesh = new CCubeMeshDiffused(pd3dDevice, pd3dCommandList, 12.0f, 12.0f, 12.0f);
 
-	//구 메쉬를 생성한다.
+	// 구 메쉬를 생성
 	CSphereMeshDiffused* pSphereMesh = new CSphereMeshDiffused(pd3dDevice,
 		pd3dCommandList, 6.0f, 20, 20);
 
@@ -362,12 +362,12 @@ void CObjectsShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera*
 	}
 }
 
-CGameObject* CObjectsShader::PickObjectByRayIntersection(XMFLOAT3& xmf3PickPosition,
-	XMFLOAT4X4& xmf4x4View, float* pfNearHitDistance)
+CGameObject* CObjectsShader::PickObjectByRayIntersection(XMFLOAT3& xmf3PickPosition, XMFLOAT4X4& xmf4x4View, float* pfNearHitDistance)
 {
 	int nIntersected = 0;
 	*pfNearHitDistance = FLT_MAX;
 	float fHitDistance = FLT_MAX;
+
 	CGameObject* pSelectedObject = NULL;
 	for (int j = 0; j < m_nObjects; j++)
 	{

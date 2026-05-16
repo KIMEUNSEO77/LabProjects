@@ -387,9 +387,9 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 	{
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
-		//마우스가 눌려지면 마우스 픽킹을 하여 선택한 게임 객체를 찾는다.
-		m_pSelectedObject = m_pScene->PickObjectPointedByCursor(LOWORD(lParam),
-			HIWORD(lParam), m_pCamera);
+		// 마우스가 눌려지면 마우스 픽킹을 하여 선택한 게임 객체를 찾는다.
+		m_pSelectedObject = m_pScene->PickObjectPointedByCursor(LOWORD(lParam), HIWORD(lParam), m_pCamera);
+
 		// 마우스 캡쳐를 하고 현재 마우스 위치를 가져온다.
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
@@ -509,7 +509,7 @@ void CGameFramework::ProcessInput()
 	// 마우스 또는 키 입력이 있으면 플레이어를 이동하거나(dwDirection) 회전한다(cxDelta 또는 cyDelta).
 	if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
 	{
-		//픽킹으로 선택한 게임 객체가 있으면 키보드를 누르거나 마우스를 움직이면 게임 개체를 이동 또는 회전한다.
+		// 픽킹으로 선택한 게임 객체가 있으면 키보드를 누르거나 마우스를 움직이면 게임 개체를 이동 또는 회전
 		if (m_pSelectedObject)
 		{
 			ProcessSelectedObject(dwDirection, cxDelta, cyDelta);
@@ -701,10 +701,9 @@ void CGameFramework::MoveToNextFrame()
 	}
 }
 
-void CGameFramework::ProcessSelectedObject(DWORD dwDirection, float cxDelta, float
-	cyDelta)
+void CGameFramework::ProcessSelectedObject(DWORD dwDirection, float cxDelta, float cyDelta)
 {
-	//픽킹으로 선택한 게임 객체가 있으면 키보드를 누르거나 마우스를 움직이면 게임 개체를 이동 또는 회전한다.
+	// 픽킹으로 선택한 게임 객체가 있으면 키보드를 누르거나 마우스를 움직이면 게임 개체를 이동 또는 회전
 	if (dwDirection != 0)
 	{
 		if (dwDirection & DIR_FORWARD) m_pSelectedObject->MoveForward(+1.0f);

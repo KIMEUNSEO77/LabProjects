@@ -1,7 +1,38 @@
 // Mesh.h
 #pragma once
 
-// Mesh를 GPU에 올리고 렌더링하기 위한 클래스들을 선언
+// 정점을 표현하기 위한 클래스를 선언 (한 점의 정보)
+class CVertex
+{
+protected:
+	// 정점의 위치 벡터(모든 정점은 최소한 위치 벡터를 가져야 한다)
+	XMFLOAT3 m_xmf3Position;
+public:
+	CVertex() { m_xmf3Position = XMFLOAT3(0.0f, 0.0f, 0.0f); }
+	CVertex(XMFLOAT3 xmf3Position) { m_xmf3Position = xmf3Position; }
+	~CVertex() {}
+};
+
+class CDiffusedVertex : public CVertex
+{
+protected:
+	// 정점의 색상
+	XMFLOAT4 m_xmf4Diffuse;
+public:
+	CDiffusedVertex() {
+		m_xmf3Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
+		m_xmf4Diffuse = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	}
+	CDiffusedVertex(float x, float y, float z, XMFLOAT4 xmf4Diffuse) {
+		m_xmf3Position = XMFLOAT3(x, y, z);
+		m_xmf4Diffuse = xmf4Diffuse;
+	}
+	CDiffusedVertex(XMFLOAT3 xmf3Position, XMFLOAT4 xmf4Diffuse) {
+		m_xmf3Position = xmf3Position;
+		m_xmf4Diffuse = xmf4Diffuse;
+	}
+	~CDiffusedVertex() {}
+};
 
 // GPU에 올려질 메쉬를 표현하기 위한 클래스를 선언
 class CMesh
@@ -50,39 +81,6 @@ protected:
 	int m_nBaseVertex = 0;    // 인덱스 버퍼의 인덱스에 더해질 인덱스
 public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList);  // GPU에 메쉬를 렌더링하는 함수
-};
-
-// 정점을 표현하기 위한 클래스를 선언 (한 점의 정보)
-class CVertex
-{
-protected:
-	// 정점의 위치 벡터(모든 정점은 최소한 위치 벡터를 가져야 한다)
-	XMFLOAT3 m_xmf3Position;
-public:
-	CVertex() { m_xmf3Position = XMFLOAT3(0.0f, 0.0f, 0.0f); }
-	CVertex(XMFLOAT3 xmf3Position) { m_xmf3Position = xmf3Position; }
-	~CVertex() {}
-};
-
-class CDiffusedVertex : public CVertex
-{
-protected:
-	// 정점의 색상
-	XMFLOAT4 m_xmf4Diffuse;
-public:
-	CDiffusedVertex() {
-		m_xmf3Position = XMFLOAT3(0.0f, 0.0f, 0.0f); 
-		m_xmf4Diffuse = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-	}
-	CDiffusedVertex(float x, float y, float z, XMFLOAT4 xmf4Diffuse) {
-		m_xmf3Position = XMFLOAT3(x, y, z); 
-		m_xmf4Diffuse = xmf4Diffuse;
-	}
-	CDiffusedVertex(XMFLOAT3 xmf3Position, XMFLOAT4 xmf4Diffuse) {
-		m_xmf3Position = xmf3Position; 
-		m_xmf4Diffuse = xmf4Diffuse;
-	}
-	~CDiffusedVertex() {}
 };
 
 // 삼각형 메쉬를 표현하기 위한 클래스를 선언

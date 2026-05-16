@@ -51,7 +51,7 @@ void CMesh::Render(ID3D12GraphicsCommandList* pd3dCommandList)
 int CMesh::CheckRayIntersection(XMFLOAT3& xmf3RayOrigin, XMFLOAT3& xmf3RayDirection,
 	float* pfNearHitDistance)
 {
-	//하나의 메쉬에서 광선은 여러 개의 삼각형과 교차할 수 있다. 교차하는 삼각형들 중 가장 가까운 삼각형을 찾는다.
+	// 하나의 메쉬에서 광선은 여러 개의 삼각형과 교차할 수 있다. 교차하는 삼각형들 중 가장 가까운 삼각형을 찾는다.
 	int nIntersections = 0;
 	BYTE* pbPositions = (BYTE*)m_pVertices;
 
@@ -64,14 +64,14 @@ int CMesh::CheckRayIntersection(XMFLOAT3& xmf3RayOrigin, XMFLOAT3& xmf3RayDirect
 	if (m_nIndices > 0) nPrimitives = (m_d3dPrimitiveTopology ==
 		D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST) ? (m_nIndices / 3) : (m_nIndices - 2);
 
-	//광선은 모델 좌표계로 표현된다.
+	// 광선은 모델 좌표계로 표현
 	XMVECTOR xmRayOrigin = XMLoadFloat3(&xmf3RayOrigin);
 	XMVECTOR xmRayDirection = XMLoadFloat3(&xmf3RayDirection);
-	//모델 좌표계의 광선과 메쉬의 바운딩 박스(모델 좌표계)와의 교차를 검사한다.
-	bool bIntersected = m_xmBoundingBox.Intersects(xmRayOrigin, xmRayDirection,
-		*pfNearHitDistance);
 
-	//모델 좌표계의 광선이 메쉬의 바운딩 박스와 교차하면 메쉬와의 교차를 검사한다.
+	// 모델 좌표계의 광선과 메쉬의 바운딩 박스(모델 좌표계)와의 교차를 검사
+	bool bIntersected = m_xmBoundingBox.Intersects(xmRayOrigin, xmRayDirection, *pfNearHitDistance);
+
+	// 모델 좌표계의 광선이 메쉬의 바운딩 박스와 교차하면 메쉬와의 교차를 검사
 	if (bIntersected)
 	{
 		float fNearHitDistance = FLT_MAX;
@@ -411,16 +411,16 @@ CSphereMeshDiffused::CSphereMeshDiffused(ID3D12Device* pd3dDevice,
 	m_nVertices = 2 + (nSlices * (nStacks - 1));
 	m_pVertices = new CDiffusedVertex[m_nVertices];
 
-	//180도를 nStacks 만큼 분할한다. 
+	// 180도를 nStacks 만큼 분할
 	float fDeltaPhi = float(XM_PI / nStacks);
-	//360도를 nSlices 만큼 분할한다.
+	// 360도를 nSlices 만큼 분할
 	float fDeltaTheta = float((2.0f * XM_PI) / nSlices);
 	int k = 0;
-	//구의 위(북극)를 나타내는 정점이다.
+	// 구의 위(북극)를 나타내는 정점
 	m_pVertices[k++] = CDiffusedVertex(0.0f, +fRadius, 0.0f, RANDOM_COLOR);
 
 	float theta_i, phi_j;
-	//원기둥 표면의 정점이다.
+	// 원기둥 표면의 정점
 	for (int j = 1; j < nStacks; j++)
 	{
 		phi_j = fDeltaPhi * j;
@@ -431,7 +431,8 @@ CSphereMeshDiffused::CSphereMeshDiffused(ID3D12Device* pd3dDevice,
 				fRadius * cosf(phi_j), fRadius * sinf(phi_j) * sinf(theta_i), RANDOM_COLOR);
 		}
 	}
-	//구의 아래(남극)를 나타내는 정점이다.
+
+	// 구의 아래(남극)를 나타내는 정점
 	m_pVertices[k] = CDiffusedVertex(0.0f, -fRadius, 0.0f, RANDOM_COLOR);
 	m_pd3dVertexBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_pVertices,
 		m_nStride * m_nVertices, D3D12_HEAP_TYPE_DEFAULT,
@@ -445,29 +446,31 @@ CSphereMeshDiffused::CSphereMeshDiffused(ID3D12Device* pd3dDevice,
 
 	k = 0;
 
-	//구의 위쪽 원뿔의 표면을 표현하는 삼각형들의 인덱스이다.
+	// 구의 위쪽 원뿔의 표면을 표현하는 삼각형들의 인덱스
 	for (int i = 0; i < nSlices; i++)
 	{
 		m_pnIndices[k++] = 0;
 		m_pnIndices[k++] = 1 + ((i + 1) % nSlices);
 		m_pnIndices[k++] = 1 + i;
 	}
-	//구의 원기둥의 표면을 표현하는 삼각형들의 인덱스이다.
+	// 구의 원기둥의 표면을 표현하는 삼각형들의 인덱스
 	for (int j = 0; j < nStacks - 2; j++)
 	{
 		for (int i = 0; i < nSlices; i++)
 		{
-			//사각형의 첫 번째 삼각형의 인덱스이다.
+			// 사각형의 첫 번째 삼각형의 인덱스
 			m_pnIndices[k++] = 1 + (i + (j * nSlices));
 			m_pnIndices[k++] = 1 + (((i + 1) % nSlices) + (j * nSlices));
 			m_pnIndices[k++] = 1 + (i + ((j + 1) * nSlices));
-			//사각형의 두 번째 삼각형의 인덱스이다.
+
+			// 사각형의 두 번째 삼각형의 인덱스
 			m_pnIndices[k++] = 1 + (i + ((j + 1) * nSlices));
 			m_pnIndices[k++] = 1 + (((i + 1) % nSlices) + (j * nSlices));
 			m_pnIndices[k++] = 1 + (((i + 1) % nSlices) + ((j + 1) * nSlices));
 		}
 	}
-	//구의 아래쪽 원뿔의 표면을 표현하는 삼각형들의 인덱스이다.
+
+	// 구의 아래쪽 원뿔의 표면을 표현하는 삼각형들의 인덱스
 	for (int i = 0; i < nSlices; i++)
 	{
 		m_pnIndices[k++] = (m_nVertices - 1);
@@ -477,9 +480,11 @@ CSphereMeshDiffused::CSphereMeshDiffused(ID3D12Device* pd3dDevice,
 	m_pd3dIndexBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_pnIndices,
 		sizeof(UINT) * m_nIndices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_INDEX_BUFFER,
 		&m_pd3dIndexUploadBuffer);
+
 	m_d3dIndexBufferView.BufferLocation = m_pd3dIndexBuffer->GetGPUVirtualAddress();
 	m_d3dIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
 	m_d3dIndexBufferView.SizeInBytes = sizeof(UINT) * m_nIndices;
+
 	m_xmBoundingBox = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(fRadius,
 		fRadius, fRadius), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 }
