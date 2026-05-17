@@ -352,11 +352,11 @@ void CGameFramework::BuildObjects()
 
 	// 씬 객체를 생성하고 씬에 포함될 게임 객체들을 생성(GPU 초기화도 포함)
 	m_pScene = new CScene();
-	m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 	// 플레이어 객체를 생성하고 플레이어의 카메라를 게임 프레임워크의 카메라로 설정
 	CAirplanePlayer* pAirplanePlayer = new CAirplanePlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
-	m_pPlayer = pAirplanePlayer;
+	m_pScene->m_pPlayer = m_pPlayer = pAirplanePlayer;
 	m_pCamera = m_pPlayer->GetCamera();
 
 	// 씬 객체를 생성하기 위하여 필요한 그래픽 명령 리스트들을 명령 큐에 추가
@@ -369,6 +369,7 @@ void CGameFramework::BuildObjects()
 
 	// 그래픽 리소스들을 생성하는 과정에 생성된 업로드 버퍼들을 소멸
 	if (m_pScene) m_pScene->ReleaseUploadBuffers();
+	if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
 
 	m_GameTimer.Reset();
 }
